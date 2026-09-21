@@ -1,15 +1,13 @@
-import {
-	EventDispatcher,
-	MOUSE,
-	Quaternion,
-	Spherical,
-	TOUCH,
-	Vector2,
-	Vector3,
-	Plane,
-	Ray,
-	MathUtils
-} from './three.module.js';
+var EventDispatcher = window.THREE.EventDispatcher;
+var MOUSE = window.THREE.MOUSE;
+var Quaternion = window.THREE.Quaternion;
+var Spherical = window.THREE.Spherical;
+var TOUCH = window.THREE.TOUCH;
+var Vector2 = window.THREE.Vector2;
+var Vector3 = window.THREE.Vector3;
+var Plane = window.THREE.Plane;
+var Ray = window.THREE.Ray;
+var MathUtils = window.THREE.MathUtils;
 
 // OrbitControls performs orbiting, dollying (zooming), and panning.
 // Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
@@ -1414,4 +1412,4 @@ class OrbitControls extends EventDispatcher {
 
 }
 
-export { OrbitControls };
+window.OrbitControls = OrbitControls;
