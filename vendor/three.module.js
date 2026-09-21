@@ -1,3 +1,4 @@
+(function(){
 /**
  * @license
  * Copyright 2010-2023 Three.js Authors
@@ -53462,4 +53463,6 @@ if ( typeof window !== 'undefined' ) {
     T.createCanvasElement = createCanvasElement;
     T.sRGBEncoding = sRGBEncoding;
   }
+})();
+
 })();
