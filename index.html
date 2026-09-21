@@ -2,17 +2,19 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <title>布偶猫猫粮3D展览馆 · Ragdoll Cat Food 3D Museum</title>
 <style>
-* { margin:0; padding:0; box-sizing:border-box; }
+* { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 html, body { width:100%; height:100%; overflow:hidden; background:#3d2a1c; font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
-canvas { display:block; }
+canvas { display:block; touch-action: none; }
 
 #loading { position:fixed; inset:0; background:radial-gradient(ellipse at center,#5a3a28 0%,#3d2a1c 80%); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:1000; color:#f0d9b0; transition: opacity .6s; }
 #loading.hide { opacity:0; pointer-events:none; }
 #loading .cat { font-size:64px; animation: bounce 1.4s infinite; }
-#loading .msg { margin-top:20px; font-size:16px; letter-spacing:2px; }
+#loading .msg { margin-top:20px; font-size:16px; letter-spacing:2px; text-align:center; padding:0 20px; }
 #loading .err { display:none; margin-top:16px; padding:12px 24px; background:#c0392b; color:#fff; border-radius:8px; font-size:14px; max-width:80%; text-align:center; }
 @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
 
@@ -24,17 +26,17 @@ canvas { display:block; }
 #title p { font-size:11px; letter-spacing:4px; color:#d4a574; margin-top:4px; }
 
 #filters { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:90%; }
-.fp { padding:8px 16px; border-radius:20px; background:rgba(255,235,200,0.15); color:#f0d9b0; border:1px solid rgba(212,168,116,0.4); cursor:pointer; font-size:13px; backdrop-filter: blur(8px); transition: all .25s; letter-spacing:1px; }
+.fp { padding:8px 16px; border-radius:20px; background:rgba(255,235,200,0.15); color:#f0d9b0; border:1px solid rgba(212,168,116,0.4); cursor:pointer; font-size:13px; backdrop-filter: blur(8px); transition: all .25s; letter-spacing:1px; -webkit-tap-highlight-color: transparent; user-select: none; }
 .fp:hover { background:rgba(255,235,200,0.25); border-color:#ffd9a0; }
 .fp.active { background:#d4a574; color:#2a1a10; font-weight:600; }
 .fp .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 
 #hint { position:absolute; top:80px; left:50%; transform:translateX(-50%); color:#d4a574; font-size:12px; letter-spacing:1px; }
 
-#back-btn { position:absolute; top:20px; left:20px; padding:6px 14px; background:rgba(255,235,200,0.15); color:#ffd9a0; border:1px solid rgba(212,168,116,0.4); border-radius:16px; cursor:pointer; font-size:13px; display:none; backdrop-filter: blur(8px); }
+#back-btn { position:absolute; top:20px; left:20px; padding:6px 14px; background:rgba(255,235,200,0.15); color:#ffd9a0; border:1px solid rgba(212,168,116,0.4); border-radius:16px; cursor:pointer; font-size:13px; display:none; backdrop-filter: blur(8px); user-select: none; }
 #back-btn.show { display:block; }
 
-#detail { position:fixed; top:0; right:-440px; width:420px; max-width:90vw; height:100vh; background:linear-gradient(135deg, rgba(60,40,28,0.95), rgba(80,50,30,0.95)); backdrop-filter: blur(16px); border-left:1px solid rgba(212,168,116,0.3); padding:30px; color:#e8d9c0; z-index:100; transition: right .5s cubic-bezier(.4,0,.2,1); overflow-y:auto; }
+#detail { position:fixed; top:0; right:-440px; width:420px; max-width:90vw; height:100vh; background:linear-gradient(135deg, rgba(60,40,28,0.95), rgba(80,50,30,0.95)); backdrop-filter: blur(16px); border-left:1px solid rgba(212,168,116,0.3); padding:30px; color:#e8d9c0; z-index:100; transition: right .5s cubic-bezier(.4,0,.2,1); overflow-y:auto; -webkit-overflow-scrolling: touch; }
 #detail.show { right:0; box-shadow: -10px 0 40px rgba(0,0,0,0.5); }
 #detail-close { position:absolute; top:15px; right:15px; width:32px; height:32px; border-radius:50%; background:rgba(212,168,116,0.2); border:none; color:#ffd9a0; font-size:18px; cursor:pointer; }
 #detail-close:hover { background:rgba(212,168,116,0.4); }
@@ -54,9 +56,139 @@ canvas { display:block; }
 #detail ul li::before { content:"·"; position:absolute; left:0; color:#d4a574; font-weight:bold; }
 
 #stage-labels { position:absolute; left:18px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:8px; }
-.stage-label { padding:6px 10px; border-radius:8px; background:rgba(255,235,200,0.12); font-size:11px; color:#ffd9a0; letter-spacing:1px; backdrop-filter:blur(8px); border-left:3px solid #d4a574; }
+.stage-label { padding:6px 10px; border-radius:8px; background:rgba(255,235,200,0.12); font-size:11px; color:#ffd9a0; letter-spacing:1px; backdrop-filter:blur(8px); border-left:3px solid #d4a574; user-select: none; }
 
 #stats-badge { position:absolute; bottom:100px; right:20px; color:#b88a5a; font-size:11px; letter-spacing:1px; text-align:right; }
+
+/* ═══ 响应式断点 ═══ */
+
+/* 大屏桌面（默认就是桌面布局，但显式声明） */
+@media (min-width: 1280px) {
+  #title h1 { font-size: 26px; letter-spacing: 8px; }
+  #stats-badge { font-size: 12px; }
+}
+
+/* 平板（768-1024）*/
+@media (max-width: 1024px) {
+  #title h1 { font-size: 20px; letter-spacing: 4px; }
+  #title p { font-size: 10px; }
+  #hint { font-size: 11px; top: 70px; }
+  #filters { bottom: 20px; gap: 8px; }
+  .fp { padding: 7px 14px; font-size: 12px; }
+  #stage-labels { left: 12px; }
+  .stage-label { font-size: 10px; padding: 5px 8px; }
+  #stats-badge { font-size: 10px; right: 12px; bottom: 90px; }
+  #detail { width: 380px; padding: 24px; }
+}
+
+/* 手机横屏（480-768）*/
+@media (max-width: 768px) {
+  #title { top: 12px; }
+  #title h1 { font-size: 16px; letter-spacing: 3px; }
+  #title p { font-size: 9px; letter-spacing: 2px; }
+  #hint { font-size: 10px; top: 56px; padding: 0 12px; max-width: 90vw; }
+  #back-btn { top: 12px; left: 12px; padding: 5px 12px; font-size: 12px; }
+  
+  /* 阶段标签改成顶部水平条 */
+  #stage-labels {
+    top: 88px;
+    left: 50%;
+    transform: translateX(-50%);
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    max-width: 92vw;
+    gap: 6px;
+  }
+  .stage-label {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
+  
+  #filters {
+    bottom: 12px;
+    gap: 6px;
+    max-width: 96vw;
+  }
+  .fp {
+    padding: 6px 11px;
+    font-size: 11px;
+    border-radius: 16px;
+  }
+  .fp .dot { width: 6px; height: 6px; margin-right: 4px; }
+  
+  #stats-badge {
+    font-size: 9px;
+    bottom: 70px;
+    right: 12px;
+  }
+  
+  /* 详情面板：手机端从底部拉起（70% 高度）*/
+  #detail {
+    width: 100vw;
+    max-width: 100vw;
+    height: 75vh;
+    top: auto;
+    bottom: -100%;
+    right: 0;
+    left: 0;
+    border-left: none;
+    border-top: 1px solid rgba(212,168,116,0.3);
+    border-radius: 20px 20px 0 0;
+    transition: bottom .5s cubic-bezier(.4,0,.2,1);
+    padding: 24px 20px;
+  }
+  #detail.show { bottom: 0; }
+  #detail-close {
+    top: 12px;
+    right: 16px;
+    width: 28px;
+    height: 28px;
+  }
+  #detail h2 { font-size: 18px; }
+  #detail .brand { font-size: 12px; margin-bottom: 12px; }
+  #detail .stats { gap: 8px; }
+  #detail .stat .val { font-size: 14px; }
+  #detail .fit { font-size: 12px; padding: 10px; }
+  #detail .pros h4, #detail .cons h4 { font-size: 12px; }
+  #detail ul li { font-size: 12px; }
+}
+
+/* 小屏手机（<480）*/
+@media (max-width: 480px) {
+  #title h1 { font-size: 14px; letter-spacing: 2px; }
+  #title p { font-size: 8px; letter-spacing: 1.5px; }
+  #hint { font-size: 9px; top: 50px; }
+  #stage-labels { top: 78px; }
+  .stage-label { font-size: 9px; padding: 3px 6px; }
+  #filters { bottom: 10px; gap: 4px; }
+  .fp { padding: 5px 9px; font-size: 10px; }
+  #stats-badge { font-size: 8px; }
+  #detail { height: 80vh; padding: 20px 16px; }
+  #detail h2 { font-size: 16px; }
+}
+
+/* 安全区域（刘海/导航条） */
+@supports (padding: max(0px)) {
+  #title { padding-top: max(8px, env(safe-area-inset-top)); }
+  #filters { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  #detail { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
+}
+
+/* 横屏特殊处理 */
+@media (max-height: 500px) and (orientation: landscape) {
+  #title { top: 6px; }
+  #title h1 { font-size: 14px; }
+  #title p { display: none; }
+  #hint { display: none; }
+  #stage-labels { top: 36px; }
+  #filters { bottom: 6px; }
+  #detail { height: 92vh; }
+}
+
+/* 防止 body 在移动端滚动 */
+body.detail-open { overflow: hidden; touch-action: none; }
+
 </style>
 </head>
 <body>
@@ -105,10 +237,13 @@ if (!window.THREE || !window.OrbitControls) {
   if (el) { el.style.display = 'block'; el.textContent = '⚠️ Three.js 或 OrbitControls 未加载'; }
   return;
 }
+
+// 设备检测
+var IS_MOBILE = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+var IS_TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 var THREE = window.THREE;
 var OrbitControls = window.OrbitControls;
 
-// ═══ 阶段定义 ═══
 var STAGE_META = {
   kitten:   { name: '幼猫期',   color: '#e9c46a', hex: 0xe9c46a },
   adult:    { name: '成猫期',   color: '#7fae7a', hex: 0x7fae7a },
@@ -118,40 +253,8 @@ var STAGE_META = {
   domestic: { name: '国货精选', color: '#5bb0a8', hex: 0x5bb0a8 }
 };
 
-// ═══ 20款猫粮数据 ═══
-var FOODS = [
-    // 幼猫期 4款
-    { id:1, name:'皇家 幼猫粮 K36', en:'Royal Canin K36', brand:'皇家 Royal Canin', origin:'法国', stage:'幼猫期 4-12月', stageKey:'kitten', protein:'34%', fat:'20%', body:'#f5ead0', accent:'#c4915c', fit:'4-12月龄幼猫，需高能量高蛋白支持生长发育', pros:['品牌历史悠久品控稳定','K36专为幼猫设计','适口性优秀','添加益生元支持消化'], cons:['含谷物成分','蛋白质34%偏低','价格中等偏上'] },
-    { id:2, name:'渴望 幼猫无谷', en:'Orijen Kitten', brand:'渴望 Orijen', origin:'加拿大', stage:'幼猫期 / 全阶段', stageKey:'kitten', protein:'40%', fat:'20%', body:'#f5ead0', accent:'#5b8c5a', fit:'追求顶级营养的幼猫家庭，预算充足', pros:['蛋白质40%极高','全阶段可用','无谷物无人工添加','适口性好'], cons:['价格昂贵','高脂肪可能软便','假货多需注意渠道'] },
-    { id:3, name:'诚实一口 P40 幼猫粮', en:'Honest Bite P40', brand:'诚实一口', origin:'中国', stage:'幼猫期', stageKey:'kitten', protein:'40%', fat:'20%', body:'#f5ead0', accent:'#e07856', fit:'注重高蛋白的幼猫，预算有限的国货支持者', pros:['国产高蛋白40%','双层颗粒适口性好','添加鱼油美毛','性价比高'], cons:['品牌较新长期数据少','渠道有限','批次波动'] },
-    { id:4, name:'卫仕 幼猫粮', en:'WOWO Kitten', brand:'卫仕 WOWO', origin:'中国', stage:'幼猫期', stageKey:'kitten', protein:'38%', fat:'18%', body:'#f5ead0', accent:'#8b6d4a', fit:'需要均衡营养的幼猫，注重肠胃调理', pros:['38%蛋白适中均衡','添加益生菌护肠','国产品控稳定','适口性好'], cons:['含谷物','蛋白质不够高','品牌知名度一般'] },
+var FOODS = [{"id":1,"brand":"皇家ROYAL CANIN","name":"皇家幼猫 K36","origin":"法国 · 1974","stage":"幼猫期","stageKey":"kitten","protein":"32%","fat":"21%","accent":"#e9c46a","fit":"4-12月幼猫 · 离乳过渡 · 免疫力构建期","pros":["法国皇家经典幼猫系列","K36 颗粒适配幼猫小嘴","DHA 促进大脑发育"],"cons":["粗蛋白只有32%不算顶尖","含部分谷物","价位偏高"]},{"id":2,"brand":"渴望 Orijen","name":"渴望幼猫无谷","origin":"加拿大 · 1985","stage":"幼猫期","stageKey":"kitten","protein":"40%","fat":"20%","accent":"#c4915c","fit":"4-12月幼猫 · 高蛋白需求 · 离乳过渡","pros":["80% 鲜肉原料","40% 粗蛋白（行业顶尖）","无谷低敏配方"],"cons":["单价最高","适口性因猫而异","高蛋白需适应过渡"]},{"id":3,"brand":"诚实一口","name":"诚实一口 P40","origin":"中国 · 2019","stage":"幼猫期","stageKey":"kitten","protein":"40%","fat":"18%","accent":"#d4a574","fit":"4-12月幼猫 · 增肌长肉 · 国货高蛋白","pros":["40% 高蛋白与渴望持平","国产性价比之王","无谷无豆"],"cons":["国货新品牌历史短","进口原料供应链","售后评测褒贬不一"]},{"id":4,"brand":"卫仕 Nourse","name":"卫仕幼猫全价","origin":"中国 · 2004","stage":"幼猫期","stageKey":"kitten","protein":"38%","fat":"16%","accent":"#e8c79a","fit":"4-12月幼猫 · 营养均衡 · 平价易购","pros":["国货老牌 20 年","配方均衡价格亲民","线下宠物店易购"],"cons":["蛋白脂肪中等偏低","营销投入大于研发","原料透明度一般"]},{"id":5,"brand":"渴望 Orijen","name":"渴望六种鱼","origin":"加拿大 · 1985","stage":"成猫期","stageKey":"adult","protein":"38%","fat":"18%","accent":"#5b9aa0","fit":"成猫 · 美毛亮毛 · 美毛护肤","pros":["六种深海鱼配方","Omega-3 美毛冠军","鲜肉原料高"],"cons":["鱼味重便便腥","鱼敏感猫慎用","价格偏高"]},{"id":6,"brand":"爱肯拿 Acana","name":"爱肯拿海洋盛宴","origin":"加拿大 · 1977","stage":"成猫期","stageKey":"adult","protein":"37%","fat":"18%","accent":"#7fa0b8","fit":"成猫 · 美毛 · 海洋鱼配方","pros":["渴望同厂姐妹品牌","海洋鱼为主 美毛好","性价比高于渴望"],"cons":["鱼源单一品种有局限","豆类成分较多","包装分装便利"]},{"id":7,"brand":"冠能 Pro Plan","name":"冠能成猫鸡肉","origin":"美国 · 1894","stage":"成猫期","stageKey":"adult","protein":"36%","fat":"15%","accent":"#c97b5a","fit":"成猫 · 经典安全 · 雀巢旗下","pros":["百年品牌 配方稳定","线下医院常推荐","益生菌助消化"],"cons":["含谷物","蛋白脂肪中等","价格中等偏上"]},{"id":8,"brand":"网易严选","name":"网易严选全价","origin":"中国 · 2016","stage":"成猫期","stageKey":"adult","protein":"36%","fat":"15%","accent":"#c98b5b","fit":"成猫 · 平价 · 网易严选供应链","pros":["电商爆款 销量第一","配方跟随进口品牌","性价比高"],"cons":["贴牌代工争议","配方频繁迭代","评测褒贬不一"]},{"id":9,"brand":"希尔思 Hill's","name":"希尔思 c/d 泌尿","origin":"美国 · 1939","stage":"功能型","stageKey":"special","protein":"32%","fat":"15%","accent":"#6f9bc9","fit":"泌尿问题 · 处方粮 · 公猫导尿后","pros":["处方粮口碑金标准","宠物医院首选","有效控制镁离子"],"cons":["需医生指导使用","非日常长期主粮","适口性一般"]},{"id":10,"brand":"皇家ROYAL CANIN","name":"皇家泌尿 S/O","origin":"法国 · 1974","stage":"功能型","stageKey":"special","protein":"32%","fat":"14%","accent":"#7fae7a","fit":"泌尿问题 · 处方粮 · 镁控制","pros":["处方粮双雄之一","溶解鸟粪石","医院渠道稳定"],"cons":["需兽医处方","味道刺激 适口一般","配方相对老旧"]},{"id":11,"brand":"冠能 Pro Plan","name":"冠能绝育控重","origin":"美国 · 1894","stage":"功能型","stageKey":"special","protein":"40%","fat":"12%","accent":"#9b6f5e","fit":"绝育后猫 · 控体重 · 防肥胖","pros":["高蛋白低脂肪","L-肉碱助燃脂","绝育猫专用配方"],"cons":["需配套控制喂食量","适口性一般","进口价偏高"]},{"id":12,"brand":"皇家ROYAL CANIN","name":"皇家长毛化毛","origin":"法国 · 1974","stage":"功能型","stageKey":"special","protein":"32%","fat":"15%","accent":"#b88a5a","fit":"长毛猫 · 化毛 · 布偶/缅因/波斯","pros":["专门化毛配方","高纤维促排毛球","适配长毛品种"],"cons":["长期吃会营养单一","化毛功能有限","需配合化毛膏"]},{"id":13,"brand":"希尔思 Hill's","name":"希尔思老年 7+","origin":"美国 · 1939","stage":"老年期","stageKey":"senior","protein":"30%","fat":"14%","accent":"#a6703e","fit":"7 岁以上 · 关节保健 · 老年呵护","pros":["老年专属配方","软骨素 + EPA 护关节","抗氧化延缓衰老"],"cons":["蛋白偏低","适口性因猫而异","价格中等"]},{"id":14,"brand":"渴望 Orijen","name":"渴望 Senior 老年","origin":"加拿大 · 1985","stage":"老年期","stageKey":"senior","protein":"38%","fat":"15%","accent":"#8b6f5e","fit":"7 岁以上 · 高蛋白护瘦体重","pros":["保留高蛋白适应老年肌肉","关节营养配方","原料依旧顶级"],"cons":["价格昂贵","高蛋白可能肾脏负担","适口性差异"]},{"id":15,"brand":"巅峰 ZIWI","name":"巅峰风干牛肉","origin":"新西兰 · 2002","stage":"冻干高肉","stageKey":"raw","protein":"45%","fat":"35%","accent":"#d4756b","fit":"高蛋白 · 冻干 · 增肌美毛","pros":["96% 鲜肉原料","风干工艺保留营养","全球冻干粮标杆"],"cons":["价格最贵","脂肪偏高需控量","假冒伪略多"]},{"id":16,"brand":"K9 Natural","name":"K9 主食冻干","origin":"新西兰 · 2006","stage":"冻干高肉","stageKey":"raw","protein":"48%","fat":"32%","accent":"#c4756b","fit":"高蛋白 · 冻干 · 顶级生食替代","pros":["98% 鲜肉含量最高","主食级冻干可单独喂","低温风干工艺"],"cons":["价格极高","货源多为代购","部分猫不吃"]},{"id":17,"brand":"弗列加特 Fregatti","name":"弗列加特鲜肉粮","origin":"中国 · 2014","stage":"国货精选","stageKey":"domestic","protein":"40%","fat":"18%","accent":"#5bb0a8","fit":"成猫 · 高蛋白 · 国货鲜肉代表","pros":["鲜肉注浆工艺领先","原料供应链透明","国货高端代表"],"cons":["品牌历史短","价格已逼近进口","评测口碑两极"]},{"id":18,"brand":"蓝氏 Legend","name":"蓝氏全价","origin":"中国 · 2003","stage":"国货精选","stageKey":"domestic","protein":"38%","fat":"16%","accent":"#4a90a4","fit":"成猫 · 国货 · 性价比之选","pros":["二十年国货品牌","配方稳定价格亲民","线下渠道广"],"cons":["原料透明度一般","营销投入大"]},{"id":19,"brand":"凯锐思 Kairishi","name":"凯锐思主食","origin":"中国 · 2015","stage":"国货精选","stageKey":"domestic","protein":"36%","fat":"14%","accent":"#6ba8a0","fit":"成猫 · 平价国货 · 大众入门","pros":["价格最便宜品牌之一","入门级国货首选","线下店覆盖广"],"cons":["配方中规中矩","蛋白脂肪偏低","品牌溢价低"]},{"id":20,"brand":"麦富迪 Myfoodie","name":"麦富迪营养森林","origin":"中国 · 2012","stage":"国货精选","stageKey":"domestic","protein":"34%","fat":"14%","accent":"#7fb89a","fit":"成猫 · 平价国货 · 性价比","pros":["上市公司系做国货","配方迭代快","渠道覆盖最广"],"cons":["配方频繁改动","原料透明度一般","营销大于研发"]}];
 
-    // 成猫期 4款
-    { id:5, name:'渴望 六种鱼', en:'Orijen Six Fish', brand:'渴望 Orijen', origin:'加拿大', stage:'成猫期', stageKey:'adult', protein:'40%', fat:'20%', body:'#f5ead0', accent:'#4a7a9c', fit:'追求顶级营养的成猫，美毛需求强烈', pros:['六种深海鱼Omega-3极高','蛋白质40%+','无谷物','美毛效果顶级'], cons:['价格昂贵','高脂可能软便','假货多'] },
-    { id:6, name:'爱肯拿 海洋盛宴', en:'Acana Sea', brand:'爱肯拿 Acana', origin:'加拿大', stage:'成猫期', stageKey:'adult', protein:'37%', fat:'18%', body:'#f5ead0', accent:'#3a6b8a', fit:'追求高品质但预算略低于渴望的成猫', pros:['性价比高(对比渴望)','多鱼源营养均衡','无谷物低敏','适口性好'], cons:['蛋白质略低于渴望','多肉源敏感猫注意','颗粒偏小'] },
-    { id:7, name:'冠能 成猫粮', en:'Pro Plan Adult', brand:'冠能 Pro Plan', origin:'美国', stage:'成猫期', stageKey:'adult', protein:'36%', fat:'16%', body:'#f5ead0', accent:'#6b8e5a', fit:'需要稳定均衡营养的成猫，注重消化健康', pros:['品牌大厂品控稳','添加益生元益生菌','适口性稳定','价格亲民'], cons:['含谷物玉米','蛋白质36%中等','原料透明度一般'] },
-    { id:8, name:'网易严选 全价成猫粮', en:'Yanxuan Adult', brand:'网易严选', origin:'中国', stage:'成猫期', stageKey:'adult', protein:'38%', fat:'18%', body:'#f5ead0', accent:'#5a7a6b', fit:'追求性价比的国货用户，成猫日常喂养', pros:['38%蛋白性价比高','无谷物配方','供应链透明','适口性好'], cons:['品牌跨界经验少','部分猫不吃','渠道单一'] },
-
-    // 功能型 4款
-    { id:9, name:'希尔思 c/d 泌尿处方粮', en:"Hill's c/d", brand:'希尔思 Hill\'s', origin:'美国', stage:'功能 · 泌尿', stageKey:'special', protein:'32%', fat:'15%', body:'#f5ead0', accent:'#4a6f9c', fit:'有泌尿系统问题的猫咪，需处方管理', pros:['泌尿处方权威','有效预防结石复发','兽医推荐度高','品控严格'], cons:['需兽医处方','蛋白质32%偏低','价格高','适口性一般'] },
-    { id:10, name:'皇家 泌尿 S/O', en:'Royal Canin S/O', brand:'皇家 Royal Canin', origin:'法国', stage:'功能 · 泌尿', stageKey:'special', protein:'34%', fat:'15%', body:'#f5ead0', accent:'#5a8aaa', fit:'有尿路结石风险的猫咪，溶解鸟粪石', pros:['溶解鸟粪石结石','皇家处方线权威','适口性好','渠道广泛'], cons:['需遵医嘱使用','蛋白质34%偏低','长期使用需监测'] },
-    { id:11, name:'冠能 绝育猫体重管理', en:'Pro Plan Sterilized', brand:'冠能 Pro Plan', origin:'美国', stage:'功能 · 控重', stageKey:'special', protein:'34%', fat:'12%', body:'#f5ead0', accent:'#7a8a4a', fit:'已绝育、需控制体重的成猫', pros:['低脂12%控重友好','高纤维增加饱腹感','添加L-肉碱','价格亲民'], cons:['蛋白质34%偏低','适口性一般','含谷物'] },
-    { id:12, name:'皇家 长毛猫化毛粮', en:'Royal Canin Hairball', brand:'皇家 Royal Canin', origin:'法国', stage:'功能 · 化毛', stageKey:'special', protein:'33%', fat:'14%', body:'#f5ead0', accent:'#9c7b5a', fit:'长毛猫（尤其布偶猫）有毛球问题', pros:['专为长毛猫设计','添加甜菜浆促排毛球','适口性好','渠道广泛'], cons:['蛋白质33%偏低','含谷物','价格中等'] },
-
-    // 老年期 2款 + 冻干 2款
-    { id:13, name:'希尔思 老年猫粮', en:"Hill's Senior 7+", brand:"希尔思 Hill's", origin:'美国', stage:'老年期 7+', stageKey:'senior', protein:'30%', fat:'14%', body:'#f5ead0', accent:'#b8784a', fit:'7岁以上老年猫，需易消化低负担', pros:['专为老年猫设计','易消化配方','添加关节保护成分','品控严格'], cons:['蛋白质30%偏低','适口性一般','价格较高'] },
-    { id:14, name:'渴望 老年猫粮', en:'Orijen Senior', brand:'渴望 Orijen', origin:'加拿大', stage:'老年期 7+', stageKey:'senior', protein:'38%', fat:'15%', body:'#f5ead0', accent:'#a8734a', fit:'7岁以上老年猫，追求高蛋白低脂', pros:['蛋白质38%远超同类','低脂15%控体重','无谷物','适口性好'], cons:['价格昂贵','老年猫肠胃可能不适应高蛋白','假货多'] },
-    { id:15, name:'巅峰 风干粮', en:'Ziwi Peak', brand:'巅峰 Ziwi Peak', origin:'新西兰', stage:'全阶段 · 高肉', stageKey:'raw', protein:'38%', fat:'30%', body:'#f5ead0', accent:'#c45a4a', fit:'追求顶级食材的全阶段猫，预算充足', pros:['风干工艺保留营养','96%含肉量','单一肉源低敏','适口性极佳'], cons:['价格极昂贵','脂肪30%偏高','能量密度大需控量'] },
-    { id:16, name:'K9 主食冻干', en:'K9 Natural', brand:'K9 Natural', origin:'新西兰', stage:'全阶段 · 高肉', stageKey:'raw', protein:'45%', fat:'25%', body:'#f5ead0', accent:'#b84a3a', fit:'追求冻干生骨肉喂养的全阶段猫', pros:['蛋白质45%行业顶尖','冻干锁鲜','含内脏骨骼完整','可复水喂食'], cons:['价格极贵','需复水耗时','高脂高能量需控量','保存需防潮'] },
-
-    // 国货精选 4款
-    { id:17, name:'弗列加特 高蛋白鲜肉粮', en:'FREGATE', brand:'弗列加特 FREGATE', origin:'中国', stage:'全阶段 · 高鲜肉', stageKey:'domestic', protein:'40%', fat:'18%', body:'#f5ead0', accent:'#3a9b8a', fit:'追求高鲜肉含量的国货用户，全阶段猫', pros:['40%高蛋白','70%鲜肉含量','无谷物','供应链透明'], cons:['品牌较新','价格中等偏上','渠道有限'] },
-    { id:18, name:'蓝氏 鲜肉幼猫粮', en:'LEGEND SANDY', brand:'蓝氏 LEGEND SANDY', origin:'中国', stage:'幼猫期 · 国产高肉', stageKey:'domestic', protein:'38%', fat:'17%', body:'#f5ead0', accent:'#4a9b7a', fit:'国产高肉路线支持者，幼猫期', pros:['38%蛋白适中','鲜肉含量高','无谷物','性价比好'], cons:['品牌知名度低','渠道有限','适口性个体差异'] },
-    { id:19, name:'凯锐思 全价成猫粮', en:'KERUISI', brand:'凯锐思 KERUISI', origin:'中国', stage:'成猫期 · 国民口粮', stageKey:'domestic', protein:'30%', fat:'14%', body:'#f5ead0', accent:'#5a8b7a', fit:'预算有限的养猫家庭，成猫日常', pros:['价格极亲民','渠道广泛易购','适口性尚可','品控基本稳定'], cons:['蛋白质30%偏低','含谷物','原料透明度一般'] },
-    { id:20, name:'麦富迪 营养均衡成猫粮', en:'Myfoodie', brand:'麦富迪 Myfoodie', origin:'中国（乖宝宠物）', stage:'全阶段 · 国民均衡', stageKey:'domestic', protein:'32%', fat:'14%', body:'#f5ead0', accent:'#3a7b8a', fit:'追求均衡性价比的国民用户', pros:['大厂出品(乖宝)','品类丰富','价格亲民','渠道广泛'], cons:['蛋白质32%偏低','含谷物','适口性波动'] }
-  ];
-
-// 5层展架布局
 var SHELF_LAYOUT = [
   { y: 7.2,  stageKey: 'kitten',   label: '幼猫期',     foodIds: [1, 2, 3, 4] },
   { y: 5.65, stageKey: 'adult',    label: '成猫期',     foodIds: [5, 6, 7, 8] },
@@ -168,7 +271,6 @@ var SHELF_THICKNESS = 0.22;
 var CAN_RADIUS = 0.62;
 var CAN_HEIGHT = 1.35;
 
-// ═══ 初始化 ═══
 var canvas = document.getElementById('c');
 var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -182,7 +284,6 @@ if (THREE.ACESFilmicToneMapping) {
 }
 
 var scene = new THREE.Scene();
-// 改用温暖深棕背景而非纯黑
 scene.background = new THREE.Color(0x3d2a1c);
 scene.fog = new THREE.Fog(0x3d2a1c, 30, 70);
 
@@ -190,12 +291,9 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
 camera.position.set(0, 4.8, 18);
 camera.lookAt(0, 4.15, SHELF_Z);
 
-// ═══ 灯光（大幅提亮）═══
-// 环境光大幅增强
 var ambient = new THREE.AmbientLight(0xfff0d8, 0.7);
 scene.add(ambient);
 
-// 主方向光：模拟展厅顶部大灯
 var dirLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
 dirLight.position.set(5, 12, 8);
 dirLight.castShadow = true;
@@ -209,11 +307,9 @@ dirLight.shadow.camera.near = 0.5;
 dirLight.shadow.camera.far = 30;
 scene.add(dirLight);
 
-// 半球光（天光地光）
 var hemi = new THREE.HemisphereLight(0xffe4b5, 0x2a1a10, 0.6);
 scene.add(hemi);
 
-// 4 个柔光射灯：宽角度、远距离，覆盖整个展架
 for (var li = 0; li < 4; li++) {
   var spot = new THREE.SpotLight(0xfff0d0, 1.5, 25, Math.PI / 4, 0.7, 1.5);
   spot.position.set(-7 + li * 4.6, 9, 4);
@@ -222,7 +318,6 @@ for (var li = 0; li < 4; li++) {
   scene.add(spot.target);
 }
 
-// ═══ 地面与墙 ═══
 var floor = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 30),
   new THREE.MeshStandardMaterial({ color: 0x4a3220, roughness: 0.9 })
@@ -231,7 +326,6 @@ floor.rotation.x = -Math.PI / 2;
 floor.receiveShadow = true;
 scene.add(floor);
 
-// 暖色地毯
 var carpet = new THREE.Mesh(
   new THREE.PlaneGeometry(14, 5),
   new THREE.MeshStandardMaterial({ color: 0x9c6a44, roughness: 0.85 })
@@ -241,7 +335,6 @@ carpet.position.set(0, 0.01, -3);
 carpet.receiveShadow = true;
 scene.add(carpet);
 
-// 后墙
 var wall = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 15),
   new THREE.MeshStandardMaterial({ color: 0x5a3a28, roughness: 0.85 })
@@ -250,7 +343,6 @@ wall.position.set(0, 7.5, -8);
 wall.receiveShadow = true;
 scene.add(wall);
 
-// ═══ 展架（提亮木材色）═══
 var shelfGroup = new THREE.Group();
 scene.add(shelfGroup);
 
@@ -279,7 +371,6 @@ SHELF_LAYOUT.forEach(function(layer, layerIdx) {
   rightCol.receiveShadow = true;
   shelfGroup.add(rightCol);
 
-  // 顶层金色匾额
   if (layerIdx === 0) {
     var plaque = new THREE.Mesh(
       new THREE.BoxGeometry(8, 0.8, 0.15),
@@ -299,15 +390,22 @@ SHELF_LAYOUT.forEach(function(layer, layerIdx) {
   stageLabelsEl.appendChild(sl);
 });
 
-// ═══ 罐体重做：品牌色主导 + 小尺寸标签 ═══
 var cans = [];
 var raycaster = new THREE.Raycaster();
 var pointer = new THREE.Vector2();
 var hoveredCan = null;
 var selectedCan = null;
 var focusedMode = false;
-var originalCameraPos = camera.position.clone();
-var originalCameraTarget = new THREE.Vector3(0, 4.15, SHELF_Z);
+
+// 移动端相机距离动态调整
+function getCameraDistance() {
+  var w = window.innerWidth;
+  if (w < 480) return 28;        // 小屏手机拉远
+  if (w < 768) return 24;        // 手机
+  if (w < 1024) return 20;       // 平板
+  return 18;                      // 桌面
+}
+var initialCameraDist = getCameraDistance();
 
 FOODS.forEach(function(food) {
   var layer = null, colIdx = -1;
@@ -320,67 +418,48 @@ FOODS.forEach(function(food) {
   var group = new THREE.Group();
   group.position.set(COL_X[colIdx], layer.y + SHELF_THICKNESS / 2 + CAN_HEIGHT / 2, SHELF_Z);
 
-  // 解析颜色
   var bodyColor = parseInt(food.accent.replace('#',''), 16);
   
-  // === 罐盖（深棕金属）===
   var lidMat = new THREE.MeshStandardMaterial({
-    color: 0x5a4030,
-    roughness: 0.35,
-    metalness: 0.8,
-    emissive: 0x2a1a10,
-    emissiveIntensity: 0.15
+    color: 0x5a4030, roughness: 0.35, metalness: 0.8,
+    emissive: 0x2a1a10, emissiveIntensity: 0.15
   });
   var lid = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS * 0.95, CAN_RADIUS * 0.95, 0.12, 32),
-    lidMat
+    new THREE.CylinderGeometry(CAN_RADIUS * 0.95, CAN_RADIUS * 0.95, 0.12, 32), lidMat
   );
   lid.position.y = CAN_HEIGHT / 2 - 0.06;
   lid.castShadow = true;
   group.add(lid);
 
-  // === 罐身（品牌主色 - 主视觉）===
   var bodyMat = new THREE.MeshStandardMaterial({
-    color: bodyColor,
-    roughness: 0.5,
-    metalness: 0.15,
-    emissive: bodyColor,
-    emissiveIntensity: 0.08
+    color: bodyColor, roughness: 0.5, metalness: 0.15,
+    emissive: bodyColor, emissiveIntensity: 0.08
   });
   var body = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS, CAN_RADIUS, CAN_HEIGHT - 0.12, 32),
-    bodyMat
+    new THREE.CylinderGeometry(CAN_RADIUS, CAN_RADIUS, CAN_HEIGHT - 0.12, 32), bodyMat
   );
   body.position.y = -0.06 / 2;
   body.castShadow = true;
   group.add(body);
 
-  // === 腰封（小尺寸，只占罐身中央）===
   var bandMat = new THREE.MeshStandardMaterial({
-    color: 0xf5ead0,
-    roughness: 0.6,
-    metalness: 0.05
+    color: 0xf5ead0, roughness: 0.6, metalness: 0.05
   });
   var band = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS * 1.005, CAN_RADIUS * 1.005, 0.5, 32),
-    bandMat
+    new THREE.CylinderGeometry(CAN_RADIUS * 1.005, CAN_RADIUS * 1.005, 0.5, 32), bandMat
   );
   band.position.y = 0.05;
   group.add(band);
 
-  // === 腰封文字（用小 CanvasTexture）===
   var labelCanvas = document.createElement('canvas');
   labelCanvas.width = 512;
   labelCanvas.height = 128;
   var ctx = labelCanvas.getContext('2d');
-  // 透明背景，让腰封米白露出
   ctx.fillStyle = '#f5ead0';
   ctx.fillRect(0, 0, 512, 128);
-  // 顶部分割线
   ctx.fillStyle = '#c4915c';
   ctx.fillRect(0, 0, 512, 4);
   ctx.fillRect(0, 124, 512, 4);
-  // 品牌名（首字大）
   ctx.fillStyle = '#3d2e25';
   ctx.font = 'bold 32px sans-serif';
   ctx.textAlign = 'center';
@@ -388,62 +467,55 @@ FOODS.forEach(function(food) {
   ctx.fillText(brandText.substring(0, 6), 256, 90);
   var labelTex = new THREE.CanvasTexture(labelCanvas);
   if (THREE.SRGBColorSpace) labelTex.colorSpace = THREE.SRGBColorSpace;
-  // 不用 transparent（罐体已经在背景上）
   var labelMat = new THREE.MeshBasicMaterial({ map: labelTex });
-  // 圆柱展开贴图：宽度 = 周长 2πr ≈ 3.9，高度 = 0.5
+  labelMat.side = THREE.DoubleSide;
   var labelCyl = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS * 1.01, CAN_RADIUS * 1.01, 0.5, 32, 1, true),
-    labelMat
+    new THREE.CylinderGeometry(CAN_RADIUS * 1.01, CAN_RADIUS * 1.01, 0.5, 32, 1, true), labelMat
   );
   labelCyl.position.y = 0.05;
-  // 反向（朝外）
-  labelCyl.material.side = THREE.DoubleSide;
   group.add(labelCyl);
 
-  // === 阶段色顶部圆环 ===
   var ringColor = STAGE_META[food.stageKey] ? STAGE_META[food.stageKey].hex : 0xd4a574;
   var ringMat = new THREE.MeshStandardMaterial({
-    color: ringColor,
-    roughness: 0.4,
-    metalness: 0.3,
-    emissive: ringColor,
-    emissiveIntensity: 0.3
+    color: ringColor, roughness: 0.4, metalness: 0.3,
+    emissive: ringColor, emissiveIntensity: 0.3
   });
   var ring = new THREE.Mesh(
-    new THREE.TorusGeometry(CAN_RADIUS * 0.92, 0.04, 8, 32),
-    ringMat
+    new THREE.TorusGeometry(CAN_RADIUS * 0.92, 0.04, 8, 32), ringMat
   );
   ring.position.y = CAN_HEIGHT / 2 - 0.18;
   ring.rotation.x = Math.PI / 2;
   group.add(ring);
 
   group.userData = {
-    food: food,
-    originalY: group.position.y,
-    isCan: true,
+    food: food, originalY: group.position.y, isCan: true,
     stageKey: layer.stageKey,
-    bodyMat: bodyMat,
-    labelMat: labelMat,
-    bandMat: bandMat,
-    lidMat: lidMat
+    bodyMat: bodyMat, labelMat: labelMat, bandMat: bandMat, lidMat: lidMat
   };
 
   cans.push(group);
   shelfGroup.add(group);
 });
 
-// ═══ 控制器 ═══
 var controls = new OrbitControls(camera, renderer.domElement);
 controls.target.copy(originalCameraTarget);
 controls.enableDamping = true;
 controls.dampingFactor = 0.08;
-controls.minDistance = 8;
-controls.maxDistance = 35;
+controls.minDistance = 6;
+controls.maxDistance = 38;
 controls.maxPolarAngle = Math.PI / 2 + 0.1;
 controls.minPolarAngle = 0.3;
-controls.enablePan = false;
+controls.enablePan = IS_TOUCH;  // 桌面禁用平移保持简洁，移动端启用平移
 
-// ═══ 筛选器 ═══
+// 触摸配置（必填）
+if (IS_TOUCH) {
+  controls.touches = {
+    ONE: THREE.TOUCH.ROTATE,
+    TWO: THREE.TOUCH.DOLLY_PAN
+  };
+}
+
+
 var FILTERS = [
   { key: 'all', label: '全部' },
   { key: 'kitten', label: '幼猫' },
@@ -481,7 +553,7 @@ function applyFilter(key) {
 }
 applyFilter('all');
 
-// ═══ 鼠标交互 ═══
+// 桌面端 click，移动端 tap（click 在移动端也能触发，但会有 300ms 延迟 → 禁用缩放即可）
 canvas.addEventListener('pointermove', function(e) {
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -541,7 +613,6 @@ function animateCamera(toPos, toTarget) {
   requestAnimationFrame(step);
 }
 
-// ═══ 详情面板 ═══
 function showDetail(food) {
   var meta = STAGE_META[food.stageKey] || STAGE_META.adult;
   var html = '<h2>' + food.name + '</h2>' +
@@ -560,14 +631,17 @@ function showDetail(food) {
     '</ul></div>';
   document.getElementById('detail-content').innerHTML = html;
   document.getElementById('detail').classList.add('show');
+  document.body.classList.add('detail-open');
 }
-function hideDetail() { document.getElementById('detail').classList.remove('show'); }
+function hideDetail() {
+  document.getElementById('detail').classList.remove('show');
+  document.body.classList.remove('detail-open');
+}
 
 document.getElementById('detail-close').addEventListener('click', hideDetail);
 document.getElementById('back-btn').addEventListener('click', exitFocus);
 window.addEventListener('keydown', function(e) { if (e.key === 'Escape') exitFocus(); });
 
-// ═══ 渲染循环 ═══
 var t0 = 0;
 function animate() {
   requestAnimationFrame(animate);
@@ -599,10 +673,31 @@ function animate() {
 }
 animate();
 
-window.addEventListener('resize', function() {
+// 应用初始相机距离
+var origX = camera.position.x, origY = camera.position.y, origZ = camera.position.z;
+var dist = Math.sqrt(origX*origX + origY*origY + origZ*origZ);
+camera.position.multiplyScalar(initialCameraDist / dist);
+controls.update();
+
+// 响应式 resize
+var resizeTimeout;
+function performResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
+  var newDist = getCameraDistance();
+  var curDist = camera.position.length();
+  if (Math.abs(newDist - curDist) > 0.5) {
+    camera.position.multiplyScalar(newDist / curDist);
+    controls.update();
+  }
+}
+window.addEventListener('resize', function() {
+  clearTimeout(resizeTimeout);
+  resizeTimeout = setTimeout(performResize, 150);
+});
+window.addEventListener('orientationchange', function() {
+  setTimeout(performResize, 300);
 });
 
 setTimeout(function() {
@@ -611,7 +706,7 @@ setTimeout(function() {
   setTimeout(function() { loading.remove(); }, 800);
 }, 200);
 
-console.log('🐱 v12 - 罐体重做 + 提亮');
+console.log('🐱 v13 - 响应式适配 + 触摸支持');
 
 })();
 </script>
