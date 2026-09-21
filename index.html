@@ -32,6 +32,7 @@
   <button id="detail-close">×</button>
 </div>
 
+<!-- Error handler -->
 <script>
 window.addEventListener('error', function(e) {
   var lt = document.getElementById('loading-text');
@@ -45,19 +46,16 @@ window.addEventListener('error', function(e) {
 });
 </script>
 
-<!-- Three.js UMD build (auto-exposes window.THREE) -->
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-
-<!-- OrbitControls via module bridge -->
+<!-- Main module: load Three.js + OrbitControls locally, expose globally, then init -->
 <script type="module">
-import { OrbitControls } from 'https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/controls/OrbitControls.js';
-window.OrbitControls = OrbitControls;
-window.__orbitReady = true;
-// Signal app code to start
-if (window.__initApp) window.__initApp();
-</script>
+import * as THREE from './vendor/three.module.js';
+import { OrbitControls } from './vendor/OrbitControls.module.js';
 
-<script>
+window.THREE = THREE;
+window.OrbitControls = OrbitControls;
+window.__libsReady = true;
+
+
 // Wait for OrbitControls to be ready
 function waitForOrbit(callback, attempts) {
   attempts = attempts || 0;
@@ -481,6 +479,10 @@ if (window.THREE && window.OrbitControls) {
 
 // Start app when libs are ready
 waitForOrbit(init);
+
+
+// Start app when DOM and libs are ready
+init();
 </script>
 
 </body>
