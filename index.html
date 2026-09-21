@@ -6,10 +6,10 @@
 <title>布偶猫猫粮3D展览馆 · Ragdoll Cat Food 3D Museum</title>
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
-html, body { width:100%; height:100%; overflow:hidden; background:#1a0f0a; font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
+html, body { width:100%; height:100%; overflow:hidden; background:#3d2a1c; font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
 canvas { display:block; }
 
-#loading { position:fixed; inset:0; background:radial-gradient(ellipse at center,#3d2820 0%,#1a0f0a 80%); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:1000; color:#f0d9b0; transition: opacity .6s; }
+#loading { position:fixed; inset:0; background:radial-gradient(ellipse at center,#5a3a28 0%,#3d2a1c 80%); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:1000; color:#f0d9b0; transition: opacity .6s; }
 #loading.hide { opacity:0; pointer-events:none; }
 #loading .cat { font-size:64px; animation: bounce 1.4s infinite; }
 #loading .msg { margin-top:20px; font-size:16px; letter-spacing:2px; }
@@ -20,43 +20,43 @@ canvas { display:block; }
 #ui > * { pointer-events:auto; }
 
 #title { position:absolute; top:20px; left:20px; right:20px; text-align:center; color:#f0d9b0; }
-#title h1 { font-size:24px; font-weight:300; letter-spacing:6px; color:#ffd9a0; text-shadow: 0 2px 12px rgba(255,200,150,0.3); }
-#title p { font-size:11px; letter-spacing:4px; color:#b88a5a; margin-top:4px; }
+#title h1 { font-size:24px; font-weight:300; letter-spacing:6px; color:#ffd9a0; text-shadow: 0 2px 12px rgba(255,200,150,0.5); }
+#title p { font-size:11px; letter-spacing:4px; color:#d4a574; margin-top:4px; }
 
 #filters { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:90%; }
-.fp { padding:8px 16px; border-radius:20px; background:rgba(40,25,18,0.7); color:#d8cba8; border:1px solid rgba(212,168,116,0.3); cursor:pointer; font-size:13px; backdrop-filter: blur(8px); transition: all .25s; letter-spacing:1px; }
-.fp:hover { background:rgba(60,40,28,0.85); border-color:#d4a574; }
-.fp.active { background:#d4a574; color:#1a0f0a; font-weight:600; }
+.fp { padding:8px 16px; border-radius:20px; background:rgba(255,235,200,0.15); color:#f0d9b0; border:1px solid rgba(212,168,116,0.4); cursor:pointer; font-size:13px; backdrop-filter: blur(8px); transition: all .25s; letter-spacing:1px; }
+.fp:hover { background:rgba(255,235,200,0.25); border-color:#ffd9a0; }
+.fp.active { background:#d4a574; color:#2a1a10; font-weight:600; }
 .fp .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 
-#hint { position:absolute; top:80px; left:50%; transform:translateX(-50%); color:#9a7a5a; font-size:12px; letter-spacing:1px; }
+#hint { position:absolute; top:80px; left:50%; transform:translateX(-50%); color:#d4a574; font-size:12px; letter-spacing:1px; }
 
-#back-btn { position:absolute; top:20px; left:20px; padding:6px 14px; background:rgba(40,25,18,0.7); color:#d4a574; border:1px solid rgba(212,168,116,0.3); border-radius:16px; cursor:pointer; font-size:13px; display:none; backdrop-filter: blur(8px); }
+#back-btn { position:absolute; top:20px; left:20px; padding:6px 14px; background:rgba(255,235,200,0.15); color:#ffd9a0; border:1px solid rgba(212,168,116,0.4); border-radius:16px; cursor:pointer; font-size:13px; display:none; backdrop-filter: blur(8px); }
 #back-btn.show { display:block; }
 
-#detail { position:fixed; top:0; right:-440px; width:420px; max-width:90vw; height:100vh; background:linear-gradient(135deg, rgba(30,18,12,0.95), rgba(45,25,18,0.95)); backdrop-filter: blur(16px); border-left:1px solid rgba(212,168,116,0.2); padding:30px; color:#e8d9c0; z-index:100; transition: right .5s cubic-bezier(.4,0,.2,1); overflow-y:auto; }
+#detail { position:fixed; top:0; right:-440px; width:420px; max-width:90vw; height:100vh; background:linear-gradient(135deg, rgba(60,40,28,0.95), rgba(80,50,30,0.95)); backdrop-filter: blur(16px); border-left:1px solid rgba(212,168,116,0.3); padding:30px; color:#e8d9c0; z-index:100; transition: right .5s cubic-bezier(.4,0,.2,1); overflow-y:auto; }
 #detail.show { right:0; box-shadow: -10px 0 40px rgba(0,0,0,0.5); }
-#detail-close { position:absolute; top:15px; right:15px; width:32px; height:32px; border-radius:50%; background:rgba(212,168,116,0.15); border:none; color:#d4a574; font-size:18px; cursor:pointer; }
-#detail-close:hover { background:rgba(212,168,116,0.3); }
-#detail h2 { color:#ffd9a0; font-size:22px; margin-bottom:4px; letter-spacing:1px; }
-#detail .brand { color:#b88a5a; font-size:13px; letter-spacing:1px; margin-bottom:20px; }
+#detail-close { position:absolute; top:15px; right:15px; width:32px; height:32px; border-radius:50%; background:rgba(212,168,116,0.2); border:none; color:#ffd9a0; font-size:18px; cursor:pointer; }
+#detail-close:hover { background:rgba(212,168,116,0.4); }
+#detail h2 { color:#ffd9a0; font-size:22px; margin-bottom:4px; }
+#detail .brand { color:#d4a574; font-size:13px; margin-bottom:20px; }
 #detail .stage { display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; margin-bottom:16px; }
 #detail .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
-#detail .stat { background:rgba(212,168,116,0.08); padding:10px; border-radius:8px; border:1px solid rgba(212,168,116,0.15); }
-#detail .stat .lbl { font-size:11px; color:#9a7a5a; letter-spacing:1px; }
+#detail .stat { background:rgba(212,168,116,0.12); padding:10px; border-radius:8px; border:1px solid rgba(212,168,116,0.2); }
+#detail .stat .lbl { font-size:11px; color:#b88a5a; }
 #detail .stat .val { font-size:16px; color:#ffd9a0; margin-top:4px; }
-#detail .fit { background:rgba(212,168,116,0.06); padding:12px; border-radius:8px; font-size:13px; line-height:1.6; margin:14px 0; border-left:3px solid #d4a574; }
+#detail .fit { background:rgba(212,168,116,0.1); padding:12px; border-radius:8px; font-size:13px; line-height:1.6; margin:14px 0; border-left:3px solid #d4a574; }
 #detail .pros, #detail .cons { margin:14px 0; }
-#detail .pros h4 { font-size:13px; margin-bottom:8px; letter-spacing:1px; color:#7fae7a; }
-#detail .cons h4 { font-size:13px; margin-bottom:8px; letter-spacing:1px; color:#c98b5a; }
+#detail .pros h4 { font-size:13px; margin-bottom:8px; color:#9ad29a; }
+#detail .cons h4 { font-size:13px; margin-bottom:8px; color:#d4a574; }
 #detail ul { list-style:none; }
 #detail ul li { padding:4px 0; padding-left:18px; position:relative; font-size:13px; }
 #detail ul li::before { content:"·"; position:absolute; left:0; color:#d4a574; font-weight:bold; }
 
 #stage-labels { position:absolute; left:18px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:8px; }
-.stage-label { padding:6px 10px; border-radius:8px; background:rgba(40,25,18,0.65); font-size:11px; color:#d8cba8; letter-spacing:1px; backdrop-filter:blur(8px); border-left:3px solid #b07060; }
+.stage-label { padding:6px 10px; border-radius:8px; background:rgba(255,235,200,0.12); font-size:11px; color:#ffd9a0; letter-spacing:1px; backdrop-filter:blur(8px); border-left:3px solid #d4a574; }
 
-#stats-badge { position:absolute; bottom:100px; right:20px; color:#9a7a5a; font-size:11px; letter-spacing:1px; text-align:right; }
+#stats-badge { position:absolute; bottom:100px; right:20px; color:#b88a5a; font-size:11px; letter-spacing:1px; text-align:right; }
 </style>
 </head>
 <body>
@@ -151,7 +151,7 @@ var FOODS = [
     { id:20, name:'麦富迪 营养均衡成猫粮', en:'Myfoodie', brand:'麦富迪 Myfoodie', origin:'中国（乖宝宠物）', stage:'全阶段 · 国民均衡', stageKey:'domestic', protein:'32%', fat:'14%', body:'#f5ead0', accent:'#3a7b8a', fit:'追求均衡性价比的国民用户', pros:['大厂出品(乖宝)','品类丰富','价格亲民','渠道广泛'], cons:['蛋白质32%偏低','含谷物','适口性波动'] }
   ];
 
-// 5层展架布局（顶层幼猫 → 底层国货）
+// 5层展架布局
 var SHELF_LAYOUT = [
   { y: 7.2,  stageKey: 'kitten',   label: '幼猫期',     foodIds: [1, 2, 3, 4] },
   { y: 5.65, stageKey: 'adult',    label: '成猫期',     foodIds: [5, 6, 7, 8] },
@@ -178,68 +178,86 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
 if (THREE.ACESFilmicToneMapping) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 1.4;
 }
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color(0x1a0f0a);
-scene.fog = new THREE.Fog(0x1a0f0a, 25, 60);
+// 改用温暖深棕背景而非纯黑
+scene.background = new THREE.Color(0x3d2a1c);
+scene.fog = new THREE.Fog(0x3d2a1c, 30, 70);
 
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 4.8, 18);
 camera.lookAt(0, 4.15, SHELF_Z);
 
-// ═══ 灯光 ═══
-var ambient = new THREE.AmbientLight(0xffd9a0, 0.35);
+// ═══ 灯光（大幅提亮）═══
+// 环境光大幅增强
+var ambient = new THREE.AmbientLight(0xfff0d8, 0.7);
 scene.add(ambient);
 
-for (var li = 0; li < 5; li++) {
-  var spot = new THREE.SpotLight(0xffd9a0, 1.2, 18, Math.PI / 6, 0.5, 1.2);
-  spot.position.set(-6.4 + li * 3.2, 5.4, -4);
-  spot.castShadow = true;
-  spot.shadow.mapSize.width = 512;
-  spot.shadow.mapSize.height = 512;
-  scene.add(spot);
-}
+// 主方向光：模拟展厅顶部大灯
+var dirLight = new THREE.DirectionalLight(0xfff5e0, 1.2);
+dirLight.position.set(5, 12, 8);
+dirLight.castShadow = true;
+dirLight.shadow.mapSize.width = 2048;
+dirLight.shadow.mapSize.height = 2048;
+dirLight.shadow.camera.left = -12;
+dirLight.shadow.camera.right = 12;
+dirLight.shadow.camera.top = 12;
+dirLight.shadow.camera.bottom = -4;
+dirLight.shadow.camera.near = 0.5;
+dirLight.shadow.camera.far = 30;
+scene.add(dirLight);
 
-var hemi = new THREE.HemisphereLight(0xffd9a0, 0x1a0f0a, 0.25);
+// 半球光（天光地光）
+var hemi = new THREE.HemisphereLight(0xffe4b5, 0x2a1a10, 0.6);
 scene.add(hemi);
+
+// 4 个柔光射灯：宽角度、远距离，覆盖整个展架
+for (var li = 0; li < 4; li++) {
+  var spot = new THREE.SpotLight(0xfff0d0, 1.5, 25, Math.PI / 4, 0.7, 1.5);
+  spot.position.set(-7 + li * 4.6, 9, 4);
+  spot.target.position.set(-7 + li * 4.6, 4, SHELF_Z);
+  scene.add(spot);
+  scene.add(spot.target);
+}
 
 // ═══ 地面与墙 ═══
 var floor = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 30),
-  new THREE.MeshStandardMaterial({ color: 0x2a1a10, roughness: 0.95 })
+  new THREE.MeshStandardMaterial({ color: 0x4a3220, roughness: 0.9 })
 );
 floor.rotation.x = -Math.PI / 2;
 floor.receiveShadow = true;
 scene.add(floor);
 
+// 暖色地毯
 var carpet = new THREE.Mesh(
   new THREE.PlaneGeometry(14, 5),
-  new THREE.MeshStandardMaterial({ color: 0x8b5a3a, roughness: 0.9 })
+  new THREE.MeshStandardMaterial({ color: 0x9c6a44, roughness: 0.85 })
 );
 carpet.rotation.x = -Math.PI / 2;
 carpet.position.set(0, 0.01, -3);
 carpet.receiveShadow = true;
 scene.add(carpet);
 
+// 后墙
 var wall = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 15),
-  new THREE.MeshStandardMaterial({ color: 0x3d2820, roughness: 0.85 })
+  new THREE.MeshStandardMaterial({ color: 0x5a3a28, roughness: 0.85 })
 );
 wall.position.set(0, 7.5, -8);
 wall.receiveShadow = true;
 scene.add(wall);
 
-// ═══ 展架 ═══
+// ═══ 展架（提亮木材色）═══
 var shelfGroup = new THREE.Group();
 scene.add(shelfGroup);
 
-var shelfWoodMat = new THREE.MeshStandardMaterial({ color: 0x8b5a3a, roughness: 0.7, metalness: 0.05 });
+var shelfWoodMat = new THREE.MeshStandardMaterial({ color: 0xa6703e, roughness: 0.6, metalness: 0.05 });
 var stageLabelsEl = document.getElementById('stage-labels');
 
 SHELF_LAYOUT.forEach(function(layer, layerIdx) {
-  // 板
   var board = new THREE.Mesh(
     new THREE.BoxGeometry(SHELF_WIDTH, SHELF_THICKNESS, SHELF_DEPTH),
     shelfWoodMat
@@ -249,7 +267,6 @@ SHELF_LAYOUT.forEach(function(layer, layerIdx) {
   board.receiveShadow = true;
   shelfGroup.add(board);
 
-  // 立柱
   var leftCol = new THREE.Mesh(new THREE.BoxGeometry(0.4, layer.y, SHELF_DEPTH), shelfWoodMat);
   leftCol.position.set(-SHELF_WIDTH / 2 + 0.2, layer.y / 2, SHELF_Z);
   leftCol.castShadow = true;
@@ -266,24 +283,23 @@ SHELF_LAYOUT.forEach(function(layer, layerIdx) {
   if (layerIdx === 0) {
     var plaque = new THREE.Mesh(
       new THREE.BoxGeometry(8, 0.8, 0.15),
-      new THREE.MeshStandardMaterial({ color: 0xd4a574, roughness: 0.4, metalness: 0.6 })
+      new THREE.MeshStandardMaterial({ color: 0xe6b878, roughness: 0.3, metalness: 0.7, emissive: 0x6a4a20, emissiveIntensity: 0.2 })
     );
     plaque.position.set(0, layer.y + 1.2, SHELF_Z);
     plaque.castShadow = true;
     shelfGroup.add(plaque);
   }
 
-  // DOM 阶段标签
   var sl = document.createElement('div');
   sl.className = 'stage-label';
   sl.dataset.stage = layer.stageKey;
-  var meta = STAGE_META[layer.stageKey] || {color:'#b07060'};
+  var meta = STAGE_META[layer.stageKey] || {color:'#d4a574'};
   sl.style.borderLeftColor = meta.color;
   sl.textContent = layer.label;
   stageLabelsEl.appendChild(sl);
 });
 
-// ═══ 罐体 ═══
+// ═══ 罐体重做：品牌色主导 + 小尺寸标签 ═══
 var cans = [];
 var raycaster = new THREE.Raycaster();
 var pointer = new THREE.Vector2();
@@ -304,59 +320,112 @@ FOODS.forEach(function(food) {
   var group = new THREE.Group();
   group.position.set(COL_X[colIdx], layer.y + SHELF_THICKNESS / 2 + CAN_HEIGHT / 2, SHELF_Z);
 
+  // 解析颜色
   var bodyColor = parseInt(food.accent.replace('#',''), 16);
-  var lidMat = new THREE.MeshStandardMaterial({ color: 0x4a3528, roughness: 0.4, metalness: 0.7 });
-  var lid = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS * 0.95, CAN_RADIUS * 0.95, 0.15, 32), lidMat);
-  lid.position.y = CAN_HEIGHT / 2 - 0.075;
+  
+  // === 罐盖（深棕金属）===
+  var lidMat = new THREE.MeshStandardMaterial({
+    color: 0x5a4030,
+    roughness: 0.35,
+    metalness: 0.8,
+    emissive: 0x2a1a10,
+    emissiveIntensity: 0.15
+  });
+  var lid = new THREE.Mesh(
+    new THREE.CylinderGeometry(CAN_RADIUS * 0.95, CAN_RADIUS * 0.95, 0.12, 32),
+    lidMat
+  );
+  lid.position.y = CAN_HEIGHT / 2 - 0.06;
   lid.castShadow = true;
   group.add(lid);
 
-  var bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.6, metalness: 0.1 });
-  var body = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS, CAN_RADIUS, CAN_HEIGHT - 0.15, 32), bodyMat);
-  body.position.y = -0.075 / 2;
+  // === 罐身（品牌主色 - 主视觉）===
+  var bodyMat = new THREE.MeshStandardMaterial({
+    color: bodyColor,
+    roughness: 0.5,
+    metalness: 0.15,
+    emissive: bodyColor,
+    emissiveIntensity: 0.08
+  });
+  var body = new THREE.Mesh(
+    new THREE.CylinderGeometry(CAN_RADIUS, CAN_RADIUS, CAN_HEIGHT - 0.12, 32),
+    bodyMat
+  );
+  body.position.y = -0.06 / 2;
   body.castShadow = true;
   group.add(body);
 
-  var bandMat = new THREE.MeshStandardMaterial({ color: 0xf0e0c0, roughness: 0.5 });
-  var band = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS * 1.005, CAN_RADIUS * 1.005, 0.4, 32), bandMat);
-  band.position.y = 0;
+  // === 腰封（小尺寸，只占罐身中央）===
+  var bandMat = new THREE.MeshStandardMaterial({
+    color: 0xf5ead0,
+    roughness: 0.6,
+    metalness: 0.05
+  });
+  var band = new THREE.Mesh(
+    new THREE.CylinderGeometry(CAN_RADIUS * 1.005, CAN_RADIUS * 1.005, 0.5, 32),
+    bandMat
+  );
+  band.position.y = 0.05;
   group.add(band);
 
-  // CanvasTexture 标签
+  // === 腰封文字（用小 CanvasTexture）===
   var labelCanvas = document.createElement('canvas');
-  labelCanvas.width = 256; labelCanvas.height = 512;
+  labelCanvas.width = 512;
+  labelCanvas.height = 128;
   var ctx = labelCanvas.getContext('2d');
+  // 透明背景，让腰封米白露出
   ctx.fillStyle = '#f5ead0';
-  ctx.fillRect(0, 0, 256, 512);
-  ctx.fillStyle = '#' + food.accent.replace('#','');
-  ctx.font = 'bold 22px sans-serif';
+  ctx.fillRect(0, 0, 512, 128);
+  // 顶部分割线
+  ctx.fillStyle = '#c4915c';
+  ctx.fillRect(0, 0, 512, 4);
+  ctx.fillRect(0, 124, 512, 4);
+  // 品牌名（首字大）
+  ctx.fillStyle = '#3d2e25';
+  ctx.font = 'bold 32px sans-serif';
   ctx.textAlign = 'center';
   var brandText = food.brand.split(' ')[0] || food.brand;
-  ctx.fillText(brandText, 128, 60);
-  ctx.fillStyle = '#3d2e25';
-  ctx.font = 'bold 20px sans-serif';
-  var nm = food.name;
-  if (nm.length > 8) nm = nm.substring(0, 8);
-  ctx.fillText(nm, 128, 110);
-  ctx.fillStyle = '#7a6655';
-  ctx.font = '14px sans-serif';
-  ctx.fillText('蛋白 ' + food.protein, 128, 460);
-  ctx.fillText('脂肪 ' + food.fat, 128, 485);
+  ctx.fillText(brandText.substring(0, 6), 256, 90);
   var labelTex = new THREE.CanvasTexture(labelCanvas);
   if (THREE.SRGBColorSpace) labelTex.colorSpace = THREE.SRGBColorSpace;
-  var labelMat = new THREE.MeshBasicMaterial({ map: labelTex, transparent: false });
-  var labelPlane = new THREE.Mesh(new THREE.PlaneGeometry(CAN_RADIUS * 1.6, CAN_HEIGHT * 0.85), labelMat);
-  labelPlane.position.set(0, -0.075 / 2, CAN_RADIUS * 1.01);
-  group.add(labelPlane);
+  // 不用 transparent（罐体已经在背景上）
+  var labelMat = new THREE.MeshBasicMaterial({ map: labelTex });
+  // 圆柱展开贴图：宽度 = 周长 2πr ≈ 3.9，高度 = 0.5
+  var labelCyl = new THREE.Mesh(
+    new THREE.CylinderGeometry(CAN_RADIUS * 1.01, CAN_RADIUS * 1.01, 0.5, 32, 1, true),
+    labelMat
+  );
+  labelCyl.position.y = 0.05;
+  // 反向（朝外）
+  labelCyl.material.side = THREE.DoubleSide;
+  group.add(labelCyl);
+
+  // === 阶段色顶部圆环 ===
+  var ringColor = STAGE_META[food.stageKey] ? STAGE_META[food.stageKey].hex : 0xd4a574;
+  var ringMat = new THREE.MeshStandardMaterial({
+    color: ringColor,
+    roughness: 0.4,
+    metalness: 0.3,
+    emissive: ringColor,
+    emissiveIntensity: 0.3
+  });
+  var ring = new THREE.Mesh(
+    new THREE.TorusGeometry(CAN_RADIUS * 0.92, 0.04, 8, 32),
+    ringMat
+  );
+  ring.position.y = CAN_HEIGHT / 2 - 0.18;
+  ring.rotation.x = Math.PI / 2;
+  group.add(ring);
 
   group.userData = {
     food: food,
     originalY: group.position.y,
     isCan: true,
     stageKey: layer.stageKey,
-    labelMat: labelMat,
     bodyMat: bodyMat,
-    bandMat: bandMat
+    labelMat: labelMat,
+    bandMat: bandMat,
+    lidMat: lidMat
   };
 
   cans.push(group);
@@ -430,9 +499,10 @@ function focusOnCan(can) {
   document.getElementById('back-btn').classList.add('show');
   cans.forEach(function(c) {
     if (c !== can) {
-      c.userData.labelMat.transparent = true; c.userData.labelMat.opacity = 0.15;
-      c.userData.bodyMat.transparent = true; c.userData.bodyMat.opacity = 0.3;
-      c.userData.bandMat.transparent = true; c.userData.bandMat.opacity = 0.3;
+      c.userData.labelMat.opacity = 0.2; c.userData.labelMat.transparent = true;
+      c.userData.bodyMat.opacity = 0.4; c.userData.bodyMat.transparent = true;
+      c.userData.bandMat.opacity = 0.4; c.userData.bandMat.transparent = true;
+      c.userData.lidMat.opacity = 0.4; c.userData.lidMat.transparent = true;
     }
   });
   var targetPos = new THREE.Vector3(can.position.x + 3, can.position.y + 1.5, can.position.z + 4);
@@ -450,6 +520,7 @@ function exitFocus() {
     c.userData.labelMat.opacity = 1; c.userData.labelMat.transparent = false;
     c.userData.bodyMat.opacity = 1; c.userData.bodyMat.transparent = false;
     c.userData.bandMat.opacity = 1; c.userData.bandMat.transparent = false;
+    c.userData.lidMat.opacity = 1; c.userData.lidMat.transparent = false;
   });
   animateCamera(originalCameraPos, originalCameraTarget);
   hideDetail();
@@ -540,7 +611,7 @@ setTimeout(function() {
   setTimeout(function() { loading.remove(); }, 800);
 }, 200);
 
-console.log('🐱 3D博物馆已加载 · 20款猫粮 · 5层展架');
+console.log('🐱 v12 - 罐体重做 + 提亮');
 
 })();
 </script>
