@@ -51,15 +51,13 @@ window.addEventListener('error', function(e) {
 import * as THREE from './vendor/three.module.js';
 import { OrbitControls } from './vendor/OrbitControls.module.js';
 
-window.THREE = THREE;
-window.OrbitControls = OrbitControls;
-window.__libsReady = true;
+
+
 
 
 // Wait for OrbitControls to be ready
 function waitForOrbit(callback, attempts) {
   attempts = attempts || 0;
-  if (window.THREE && window.OrbitControls) {
     callback();
   } else if (attempts < 100) {
     setTimeout(function() { waitForOrbit(callback, attempts + 1); }, 50);
@@ -460,12 +458,9 @@ function init() {
   console.log('🐱 3D博物馆已加载 · 20款猫粮 · 5层展架');
 }
 
-if (window.THREE && window.OrbitControls) {
-  init();
 } else {
   document.getElementById('loading-text').textContent = '等待Three.js加载...';
   window.addEventListener('load', () => {
-    if (window.THREE && window.OrbitControls) init();
     else {
       document.getElementById('loading-text').style.display = 'none';
       document.getElementById('error-msg').style.display = 'block';
@@ -480,6 +475,8 @@ waitForOrbit(init);
 
 
 // Start app when DOM and libs are ready
+
+
 init();
 </script>
 
