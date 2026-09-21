@@ -1,174 +1,670 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>布偶猫猫粮展览馆 · Ragdoll Cat Food Museum</title>
-  <meta name="description" content="20款精选猫粮3D展架陈列 · 营养成分透明对比 · 布偶猫科学选粮指南">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐱</text></svg>">
-  <link rel="stylesheet" href="style.css?v=2">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>布偶猫猫粮3D展览馆 · Ragdoll Cat Food 3D Museum</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{overflow:hidden;background:#1a0f08;font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+canvas{display:block}
+#loading{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:#1a0f08;color:#d4a574;font-size:1.2rem;z-index:9999;flex-direction:column;gap:1rem;transition:opacity .6s}
+#loading.hide{opacity:0;pointer-events:none}
+#loading .cat{font-size:3rem;animation:bounce 1s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* UI overlay */
+#ui{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:100}
+#title-bar{position:absolute;top:1rem;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none}
+#title-bar h1{font-size:1.1rem;color:#d4a574;letter-spacing:.2em;font-weight:600;text-shadow:0 2px 8px rgba(0,0,0,.8)}
+#title-bar p{font-size:.7rem;color:rgba(212,165,116,.5);letter-spacing:.15em;margin-top:.2rem}
+
+/* Filter pills */
+#filters{position:absolute;bottom:1.5rem;left:50%;transform:translateX(-50%);display:flex;gap:.4rem;flex-wrap:wrap;justify-content:center;pointer-events:auto;max-width:95vw}
+.fp{padding:.4rem .9rem;border-radius:999px;border:1.5px solid rgba(255,255,255,.15);background:rgba(26,15,8,.7);color:rgba(255,255,255,.6);font-size:.75rem;font-weight:600;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);white-space:nowrap}
+.fp:hover{color:#fff;border-color:rgba(255,255,255,.3)}
+.fp.active{color:#fff;font-weight:700}
+.fp .dot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:.3rem;vertical-align:middle}
+
+/* Left stage labels */
+#stage-labels{position:absolute;top:50%;left:.8rem;transform:translateY(-50%);display:flex;flex-direction:column;gap:.3rem;pointer-events:auto}
+.sl{padding:.35rem .7rem;border-radius:6px;background:rgba(26,15,8,.6);color:rgba(255,255,255,.5);font-size:.65rem;font-weight:600;cursor:pointer;transition:all .3s;backdrop-filter:blur(6px);border-left:3px solid var(--c,#ccc)}
+.sl:hover{color:#fff;background:rgba(26,15,8,.8)}
+.sl.active{color:#fff;background:rgba(26,15,8,.85)}
+
+/* Detail panel */
+#detail{position:fixed;top:0;right:0;width:380px;max-width:90vw;height:100%;background:rgba(20,12,6,.92);backdrop-filter:blur(16px);transform:translateX(100%);transition:transform .4s cubic-bezier(.4,0,.2,1);z-index:200;overflow-y:auto;pointer-events:auto;border-left:1px solid rgba(212,165,116,.15)}
+#detail.show{transform:translateX(0)}
+#detail-inner{padding:1.5rem;color:#f5ead0}
+#detail-close{position:absolute;top:1rem;right:1rem;width:32px;height:32px;border-radius:50%;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#d4a574;font-size:1.2rem;cursor:pointer;transition:all .3s}
+#detail-close:hover{background:rgba(212,165,116,.2);color:#fff}
+.dh{display:flex;gap:.8rem;align-items:flex-start;margin-bottom:1rem;margin-top:.5rem}
+.dh-icon{width:48px;height:48px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:#fff;flex-shrink:0}
+.dh h2{font-size:1.15rem;font-weight:700;color:#fff;margin-bottom:.15rem}
+.dh p{font-size:.75rem;color:rgba(245,234,208,.5)}
+.dh-tag{display:inline-block;padding:.15rem .5rem;border-radius:999px;font-size:.65rem;font-weight:600;color:#fff;margin-top:.2rem}
+.dn{display:flex;gap:.5rem;margin-bottom:1rem}
+.dn-card{flex:1;background:rgba(255,255,255,.04);border-radius:8px;padding:.6rem;text-align:center;border:1px solid rgba(255,255,255,.06)}
+.dn-label{font-size:.65rem;color:rgba(245,234,208,.4);display:block;margin-bottom:.2rem}
+.dn-val{font-size:1.1rem;font-weight:800;display:block}
+.d-fit{background:rgba(212,165,116,.08);border-radius:8px;padding:.6rem .8rem;font-size:.8rem;color:rgba(245,234,208,.7);margin-bottom:1rem;display:flex;gap:.4rem;align-items:center}
+.d-pc{display:flex;flex-direction:column;gap:.6rem}
+.d-pros,.d-cons{background:rgba(255,255,255,.03);border-radius:8px;padding:.8rem;border-left:3px solid}
+.d-pros{border-color:#7bc4a4}
+.d-cons{border-color:#c98b9c}
+.d-pc h4{font-size:.8rem;color:#fff;margin-bottom:.3rem}
+.d-pc ul{list-style:none;padding:0}
+.d-pc li{font-size:.75rem;color:rgba(245,234,208,.6);padding:.15rem 0 .15rem .8rem;position:relative}
+.d-pros li::before{content:'✓';position:absolute;left:0;color:#7bc4a4;font-weight:700}
+.d-cons li::before{content:'!';position:absolute;left:0;color:#c98b9c;font-weight:700}
+
+/* Hint */
+#hint{position:absolute;bottom:5rem;left:50%;transform:translateX(-50%);color:rgba(212,165,116,.4);font-size:.65rem;text-align:center;pointer-events:none}
+#back-btn{position:absolute;top:1rem;right:1rem;padding:.4rem .8rem;border-radius:8px;border:1px solid rgba(212,165,116,.3);background:rgba(26,15,8,.6);color:#d4a574;font-size:.7rem;cursor:pointer;transition:all .3s;backdrop-filter:blur(8px);pointer-events:auto;display:none}
+#back-btn:hover{background:rgba(212,165,116,.15);color:#fff}
+#back-btn.show{display:block}
+
+@media(max-width:600px){
+  #detail{width:100vw}
+  #stage-labels{display:none}
+  #filters{bottom:1rem}
+  .fp{padding:.3rem .6rem;font-size:.65rem}
+}
+</style>
 </head>
 <body>
-  <!-- 动态背景 -->
-  <div class="bg-decoration">
-    <div class="bg-blob"></div>
-    <div class="bg-blob"></div>
-    <div class="bg-blob"></div>
+<div id="loading"><div class="cat">🐱</div><div>正在加载3D展览馆...</div></div>
+
+<div id="ui">
+  <div id="title-bar">
+    <h1>布偶猫猫粮3D展览馆</h1>
+    <p>RAGDOLL · CAT FOOD MUSEUM · 3D</p>
   </div>
-  <div class="paw-pattern"></div>
+  <div id="stage-labels"></div>
+  <button id="back-btn">← 返回展馆</button>
+  <div id="filters"></div>
+  <div id="hint">拖拽环视 · 滚轮缩放 · 点击罐体查看详情</div>
+</div>
 
-  <!-- 导航 -->
-  <nav class="navbar">
-    <div class="nav-inner">
-      <a href="#hero" class="nav-logo">
-        <span class="cat-emoji">🐱</span>
-        <span>布偶猫猫粮展览馆</span>
-      </a>
-      <div class="nav-links">
-        <a href="#breed">品种特点</a>
-        <a href="#exhibits">猫粮展厅</a>
-        <a href="#knowledge">营养知识</a>
-        <a href="#compare">对比表</a>
+<div id="detail">
+  <div id="detail-inner"></div>
+  <button id="detail-close">×</button>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js", "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/" } }
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+// ═══ Data ═══
+const STAGE_META = {
+  kitten:{name:'幼猫期',color:0xe9c46a,hex:'#e9c46a',icon:'🐱',desc:'4-12月龄'},
+  adult:{name:'成猫期',color:0x7fae7a,hex:'#7fae7a',icon:'🐈',desc:'1-7岁'},
+  special:{name:'功能型',color:0x6f9bc9,hex:'#6f9bc9',icon:'💊',desc:'处方粮'},
+  senior:{name:'老年期',color:0xc98b5b,hex:'#c98b5b',icon:'🐾',desc:'7岁+'},
+  raw:{name:'冻干高肉',color:0xd4756b,hex:'#d4756b',icon:'🥩',desc:'高含肉'},
+  domestic:{name:'国货精选',color:0x5bb0a8,hex:'#5bb0a8',icon:'⭐',desc:'国产优质'}
+};
+
+const FOODS = [
+  {id:1,name:'皇家 幼猫粮 K36',brand:'皇家 Royal Canin',origin:'法国',stage:'幼猫期 4-12月',stageKey:'kitten',protein:'34%',fat:'20%',accent:0xc4915c,fit:'4-12月龄幼猫',pros:['品牌历史悠久品控稳定','K36专为幼猫设计','适口性优秀'],cons:['含谷物成分','蛋白质34%偏低','价格中等偏上']},
+  {id:2,name:'渴望 幼猫无谷',brand:'渴望 Orijen',origin:'加拿大',stage:'幼猫期/全阶段',stageKey:'kitten',protein:'40%',fat:'20%',accent:0x5b8c5a,fit:'追求顶级营养的幼猫',pros:['蛋白质40%极高','全阶段可用','无谷物'],cons:['价格昂贵','高脂可能软便','假货多']},
+  {id:3,name:'诚实一口 P40',brand:'诚实一口',origin:'中国',stage:'幼猫期',stageKey:'kitten',protein:'40%',fat:'20%',accent:0xe07856,fit:'高蛋白国货幼猫',pros:['国产高蛋白40%','双层颗粒适口性好','性价比高'],cons:['品牌较新','渠道有限']},
+  {id:4,name:'卫仕 幼猫粮',brand:'卫仕 WOWO',origin:'中国',stage:'幼猫期',stageKey:'kitten',protein:'38%',fat:'18%',accent:0x8b6d4a,fit:'需均衡营养的幼猫',pros:['38%蛋白均衡','添加益生菌','品控稳定'],cons:['含谷物','蛋白质不够高']},
+  {id:5,name:'渴望 六种鱼',brand:'渴望 Orijen',origin:'加拿大',stage:'成猫期',stageKey:'adult',protein:'40%',fat:'20%',accent:0x4a7a9c,fit:'美毛需求强烈的成猫',pros:['六种深海鱼Omega-3极高','蛋白质40%+','美毛效果顶级'],cons:['价格昂贵','高脂可能软便']},
+  {id:6,name:'爱肯拿 海洋盛宴',brand:'爱肯拿 Acana',origin:'加拿大',stage:'成猫期',stageKey:'adult',protein:'37%',fat:'18%',accent:0x3a6b8a,fit:'追求高品质成猫',pros:['性价比高','多鱼源均衡','无谷物低敏'],cons:['蛋白质略低于渴望','颗粒偏小']},
+  {id:7,name:'冠能 成猫粮',brand:'冠能 Pro Plan',origin:'美国',stage:'成猫期',stageKey:'adult',protein:'36%',fat:'16%',accent:0x6b8e5a,fit:'需稳定均衡营养的成猫',pros:['品牌大厂品控稳','添加益生元益生菌','价格亲民'],cons:['含谷物玉米','蛋白质36%中等']},
+  {id:8,name:'网易严选 成猫粮',brand:'网易严选',origin:'中国',stage:'成猫期',stageKey:'adult',protein:'38%',fat:'18%',accent:0x5a7a6b,fit:'追求性价比国货成猫',pros:['38%蛋白性价比高','无谷物配方','供应链透明'],cons:['品牌跨界经验少','渠道单一']},
+  {id:9,name:'希尔思 c/d 泌尿',brand:"希尔思 Hill's",origin:'美国',stage:'功能·泌尿',stageKey:'special',protein:'32%',fat:'15%',accent:0x4a6f9c,fit:'有泌尿系统问题的猫咪',pros:['泌尿处方权威','有效预防结石','兽医推荐'],cons:['需兽医处方','蛋白质32%偏低','适口性一般']},
+  {id:10,name:'皇家 泌尿 S/O',brand:'皇家 Royal Canin',origin:'法国',stage:'功能·泌尿',stageKey:'special',protein:'34%',fat:'15%',accent:0x5a8aaa,fit:'有尿路结石风险的猫咪',pros:['溶解鸟粪石结石','皇家处方权威','适口性好'],cons:['需遵医嘱','蛋白质偏低']},
+  {id:11,name:'冠能 绝育控重',brand:'冠能 Pro Plan',origin:'美国',stage:'功能·控重',stageKey:'special',protein:'34%',fat:'12%',accent:0x7a8a4a,fit:'已绝育需控体重的成猫',pros:['低脂12%控重友好','高纤维饱腹','添加L-肉碱'],cons:['蛋白质偏低','适口性一般']},
+  {id:12,name:'皇家 长毛猫化毛',brand:'皇家 Royal Canin',origin:'法国',stage:'功能·化毛',stageKey:'special',protein:'33%',fat:'14%',accent:0x9c7b5a,fit:'长毛猫有毛球问题(布偶猫)',pros:['专为长毛猫设计','添加甜菜浆促排毛球','适口性好'],cons:['蛋白质33%偏低','含谷物']},
+  {id:13,name:'希尔思 老年猫粮',brand:"希尔思 Hill's",origin:'美国',stage:'老年期 7+',stageKey:'senior',protein:'30%',fat:'14%',accent:0xb8784a,fit:'7岁以上老年猫',pros:['专为老年猫设计','易消化配方','关节保护成分'],cons:['蛋白质30%偏低','适口性一般']},
+  {id:14,name:'渴望 老年猫粮',brand:'渴望 Orijen',origin:'加拿大',stage:'老年期 7+',stageKey:'senior',protein:'38%',fat:'15%',accent:0xa8734a,fit:'7岁以上追求高蛋白低脂老年猫',pros:['蛋白质38%远超同类','低脂15%控体重','无谷物'],cons:['价格昂贵','老年猫肠胃可能不适应']},
+  {id:15,name:'巅峰 风干粮',brand:'巅峰 Ziwi Peak',origin:'新西兰',stage:'全阶段·高肉',stageKey:'raw',protein:'38%',fat:'30%',accent:0xc45a4a,fit:'追求顶级食材全阶段猫',pros:['风干工艺保留营养','96%含肉量','单一肉源低敏'],cons:['价格极昂贵','脂肪30%偏高','能量密度大需控量']},
+  {id:16,name:'K9 主食冻干',brand:'K9 Natural',origin:'新西兰',stage:'全阶段·高肉',stageKey:'raw',protein:'45%',fat:'25%',accent:0xb84a3a,fit:'追求冻干生骨肉喂养',pros:['蛋白质45%行业顶尖','冻干锁鲜','含内脏骨骼完整'],cons:['价格极贵','需复水耗时','保存需防潮']},
+  {id:17,name:'弗列加特 高蛋白',brand:'弗列加特 FREGATE',origin:'中国',stage:'全阶段·高鲜肉',stageKey:'domestic',protein:'40%',fat:'18%',accent:0x3a9b8a,fit:'追求高鲜肉含量国货用户',pros:['40%高蛋白','70%鲜肉含量','无谷物','供应链透明'],cons:['品牌较新','渠道有限']},
+  {id:18,name:'蓝氏 鲜肉幼猫',brand:'蓝氏 LEGEND SANDY',origin:'中国',stage:'幼猫·国产高肉',stageKey:'domestic',protein:'38%',fat:'17%',accent:0x4a9b7a,fit:'国产高肉路线幼猫',pros:['38%蛋白适中','鲜肉含量高','无谷物','性价比好'],cons:['品牌知名度低','渠道有限']},
+  {id:19,name:'凯锐思 全价成猫',brand:'凯锐思 KERUISI',origin:'中国',stage:'成猫·国民口粮',stageKey:'domestic',protein:'30%',fat:'14%',accent:0x5a8b7a,fit:'预算有限养猫家庭',pros:['价格极亲民','渠道广泛易购','品控基本稳定'],cons:['蛋白质30%偏低','含谷物','原料透明度一般']},
+  {id:20,name:'麦富迪 营养均衡',brand:'麦富迪 Myfoodie',origin:'中国',stage:'全阶段·国民均衡',stageKey:'domestic',protein:'32%',fat:'14%',accent:0x3a7b8a,fit:'追求均衡性价比国民用户',pros:['大厂出品(乖宝)','品类丰富','价格亲民'],cons:['蛋白质32%偏低','含谷物']}
+];
+
+// Shelf layout: 5 rows × 4 cols
+const SHELF_Y = [7.2, 5.65, 4.1, 2.55, 1.0];
+const COL_X = [-4.8, -1.6, 1.6, 4.8];
+const SHELF_Z = -6.35, SHELF_W = 12.6, SHELF_D = 1.5, SHELF_T = 0.22;
+const CAN_R = 0.62, CAN_H = 1.35;
+const ROW_STAGES = ['kitten','adult','special','mixed','domestic'];
+const ROW_LABELS = [
+  {key:'kitten',label:'幼猫期'},
+  {key:'adult',label:'成猫期'},
+  {key:'special',label:'功能型'},
+  {key:'mixed',label:'老年·冻干'},
+  {key:'domestic',label:'国货精选'}
+];
+
+// ═══ Three.js Setup ═══
+const scene = new THREE.Scene();
+scene.fog = new THREE.Fog(0x1a0f08, 12, 30);
+scene.background = new THREE.Color(0x1a0f08);
+
+const camera = new THREE.PerspectiveCamera(50, innerWidth/innerHeight, 0.1, 100);
+const CAM_INIT = new THREE.Vector3(0, 4.8, 18);
+const CAM_LOOK = new THREE.Vector3(0, 4.15, SHELF_Z);
+camera.position.copy(CAM_INIT);
+
+const renderer = new THREE.WebGLRenderer({antialias:true});
+renderer.setSize(innerWidth, innerHeight);
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(renderer.domElement);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target.copy(CAM_LOOK);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.minDistance = 6;
+controls.maxDistance = 25;
+controls.maxPolarAngle = Math.PI * 0.55;
+controls.minPolarAngle = Math.PI * 0.2;
+controls.update();
+
+// ═══ Lights ═══
+scene.add(new THREE.AmbientLight(0x3a2515, 0.4));
+
+// Breathing spotlight
+const topLight = new THREE.SpotLight(0xffd9a0, 2.5, 30, Math.PI/4, 0.5);
+topLight.position.set(0, 12, -2);
+topLight.target.position.set(0, 4, SHELF_Z);
+scene.add(topLight, topLight.target);
+
+// Point lights along shelves
+for (let i = 0; i < 5; i++) {
+  const pl = new THREE.PointLight(0xffd9a0, 0.6, 8);
+  pl.position.set(-6.4 + i * 3.2, 5.4, -4.4);
+  scene.add(pl);
+}
+
+// ═══ Room ═══
+// Back wall
+const wallMat = new THREE.MeshStandardMaterial({color:0x2a1810, roughness:0.9});
+const wall = new THREE.Mesh(new THREE.PlaneGeometry(54, 26), wallMat);
+wall.position.set(0, 8, SHELF_Z - SHELF_D/2 - 0.5);
+scene.add(wall);
+
+// Wood plank lines on wall
+for (let i = -12; i <= 12; i += 0.8) {
+  const plank = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.04, 26),
+    new THREE.MeshBasicMaterial({color:0x1a0c06, transparent:true, opacity:0.4})
+  );
+  plank.position.set(i, 8, SHELF_Z - SHELF_D/2 - 0.48);
+  scene.add(plank);
+}
+
+// Floor
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(54, 30),
+  new THREE.MeshStandardMaterial({color:0x1f1208, roughness:1})
+);
+floor.rotation.x = -Math.PI/2;
+floor.position.set(0, 0, 0);
+floor.receiveShadow = true;
+scene.add(floor);
+
+// Carpet
+const carpet = new THREE.Mesh(
+  new THREE.PlaneGeometry(16, 10),
+  new THREE.MeshStandardMaterial({color:0x4a2a18, roughness:0.8})
+);
+carpet.rotation.x = -Math.PI/2;
+carpet.position.set(0, 0.01, -1);
+scene.add(carpet);
+
+// Plaque
+const plaqueCanvas = document.createElement('canvas');
+plaqueCanvas.width = 512; plaqueCanvas.height = 128;
+const pctx = plaqueCanvas.getContext('2d');
+pctx.fillStyle = '#1a0f08';
+pctx.fillRect(0,0,512,128);
+pctx.fillStyle = '#d4a574';
+pctx.font = 'bold 36px serif';
+pctx.textAlign = 'center';
+pctx.fillText('🐱 布偶猫猫粮展览馆 🐱', 256, 75);
+pctx.font = '14px serif';
+pctx.fillStyle = '#8a6a3a';
+pctx.fillText('RAGDOLL CAT FOOD MUSEUM', 256, 100);
+const plaqueTex = new THREE.CanvasTexture(plaqueCanvas);
+const plaque = new THREE.Mesh(
+  new THREE.PlaneGeometry(6, 1.5),
+  new THREE.MeshBasicMaterial({map:plaqueTex})
+);
+plaque.position.set(0, 9.5, SHELF_Z - 0.5);
+scene.add(plaque);
+
+// Backlight for plaque
+const plaqueLight = new THREE.PointLight(0xffd9a0, 0.8, 6);
+plaqueLight.position.set(0, 9.5, SHELF_Z - 1);
+scene.add(plaqueLight);
+
+// ═══ Shelves ═══
+const woodMat = new THREE.MeshStandardMaterial({color:0x8b6d4a, roughness:0.7});
+const woodDarkMat = new THREE.MeshStandardMaterial({color:0x6b5035, roughness:0.7});
+
+// Shelf boards
+SHELF_Y.forEach((y, i) => {
+  const board = new THREE.Mesh(
+    new THREE.BoxGeometry(SHELF_W, SHELF_T, SHELF_D),
+    woodMat
+  );
+  board.position.set(0, y - CAN_H/2 - 0.1, SHELF_Z);
+  board.receiveShadow = true;
+  scene.add(board);
+});
+
+// Vertical posts
+for (let x of [-SHELF_W/2 + 0.2, 0, SHELF_W/2 - 0.2]) {
+  const post = new THREE.Mesh(
+    new THREE.BoxGeometry(0.26, 9.1, 0.4),
+    woodDarkMat
+  );
+  post.position.set(x, 4.6, SHELF_Z);
+  scene.add(post);
+}
+
+// Top canopy
+const canopy = new THREE.Mesh(
+  new THREE.BoxGeometry(SHELF_W + 0.6, 0.3, SHELF_D + 0.3),
+  woodDarkMat
+);
+canopy.position.set(0, SHELF_Y[0] + CAN_H/2 + 0.2, SHELF_Z);
+scene.add(canopy);
+
+// ═══ Can Creation ═══
+function createCanLabelTexture(food) {
+  const c = document.createElement('canvas');
+  c.width = 256; c.height = 128;
+  const ctx = c.getContext('2d');
+
+  // Background
+  const grad = ctx.createLinearGradient(0,0,0,128);
+  grad.addColorStop(0, '#f5ead0');
+  grad.addColorStop(0.5, '#ede0c8');
+  grad.addColorStop(1, '#e8d5b8');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,256,128);
+
+  // Accent band
+  const accentHex = '#' + food.accent.toString(16).padStart(6,'0');
+  ctx.fillStyle = accentHex;
+  ctx.fillRect(0, 85, 256, 20);
+
+  // Brand
+  ctx.fillStyle = '#3d2e25';
+  ctx.font = 'bold 16px sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(food.brand.split(' ')[0], 128, 30);
+
+  // Name
+  ctx.font = 'bold 12px sans-serif';
+  ctx.fillText(food.name, 128, 50);
+
+  // Stage
+  const sm = STAGE_META[food.stageKey];
+  ctx.fillStyle = accentHex;
+  ctx.font = 'bold 10px sans-serif';
+  ctx.fillText(sm.name, 128, 70);
+
+  // Protein
+  ctx.fillStyle = '#3d2e25';
+  ctx.font = 'bold 9px sans-serif';
+  ctx.fillText('P'+food.protein+' F'+food.fat, 128, 115);
+
+  return new THREE.CanvasTexture(c);
+}
+
+const cans = [];
+let foodIdx = 0;
+
+for (let row = 0; row < 5; row++) {
+  for (let col = 0; col < 4; col++) {
+    const food = FOODS[foodIdx];
+    if (!food) break;
+    foodIdx++;
+
+    const canGroup = new THREE.Group();
+
+    // Can body
+    const bodyGeo = new THREE.CylinderGeometry(CAN_R, CAN_R, CAN_H, 32, 1, true);
+    const labelTex = createCanLabelTexture(food);
+    labelTex.wrapS = THREE.RepeatWrapping;
+    labelTex.repeat.x = 1;
+    labelTex.offset.x = 0.5;
+    const bodyMat = new THREE.MeshStandardMaterial({
+      map: labelTex,
+      roughness: 0.4,
+      metalness: 0.1
+    });
+    const body = new THREE.Mesh(bodyGeo, bodyMat);
+    canGroup.add(body);
+
+    // Top cap
+    const capMat = new THREE.MeshStandardMaterial({color:0xc4b090, roughness:0.3, metalness:0.3});
+    const cap = new THREE.Mesh(new THREE.CylinderGeometry(CAN_R*0.95, CAN_R*0.95, 0.1, 32), capMat);
+    cap.position.y = CAN_H/2 + 0.05;
+    canGroup.add(cap);
+
+    // Bottom
+    const bottom = new THREE.Mesh(new THREE.CylinderGeometry(CAN_R*0.95, CAN_R*0.95, 0.08, 32), capMat);
+    bottom.position.y = -CAN_H/2 - 0.04;
+    canGroup.add(bottom);
+
+    // Position
+    canGroup.position.set(COL_X[col], SHELF_Y[row], SHELF_Z);
+    canGroup.userData = { food, row, col, originalY: SHELF_Y[row], originalZ: SHELF_Z };
+    canGroup.castShadow = true;
+
+    scene.add(canGroup);
+    cans.push(canGroup);
+  }
+}
+
+// ═══ Glow rings (for selection) ═══
+function createGlowRing(color) {
+  const geo = new THREE.RingGeometry(CAN_R * 1.3, CAN_R * 1.6, 32);
+  const mat = new THREE.MeshBasicMaterial({color, transparent:true, opacity:0, side:THREE.DoubleSide});
+  const ring = new THREE.Mesh(geo, mat);
+  ring.rotation.x = -Math.PI/2;
+  return ring;
+}
+cans.forEach(c => {
+  const ring = createGlowRing(c.userData.food.accent);
+  ring.position.set(c.position.x, c.userData.originalY - CAN_H/2 - 0.12, c.position.z);
+  scene.add(ring);
+  c.userData.ring = ring;
+});
+
+// ═══ Interaction ═══
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+let hoveredCan = null;
+let selectedCan = null;
+let focusedMode = false;
+let cameraAnimating = false;
+
+function onPointerMove(e) {
+  mouse.x = (e.clientX / innerWidth) * 2 - 1;
+  mouse.y = -(e.clientY / innerHeight) * 2 + 1;
+
+  if (focusedMode) return;
+
+  raycaster.setFromCamera(mouse, camera);
+  const meshes = cans.flatMap(c => c.children);
+  const hits = raycaster.intersectObjects(meshes);
+
+  let foundCan = null;
+  if (hits.length > 0) {
+    // Walk up to find the group
+    let obj = hits[0].object;
+    while (obj && !obj.userData.food) obj = obj.parent;
+    if (obj && !obj.userData.dimmed) foundCan = obj;
+  }
+
+  if (hoveredCan && hoveredCan !== foundCan) {
+    hoveredCan.scale.setScalar(1);
+    hoveredCan.userData.ring.material.opacity = 0;
+  }
+  hoveredCan = foundCan;
+  if (hoveredCan) {
+    hoveredCan.scale.setScalar(1.08);
+    hoveredCan.userData.ring.material.opacity = 0.4;
+    document.body.style.cursor = 'pointer';
+  } else {
+    document.body.style.cursor = 'default';
+  }
+}
+
+let downPos = {x:0, y:0};
+function onPointerDown(e) {
+  downPos = {x: e.clientX, y: e.clientY};
+}
+function onPointerUp(e) {
+  const dx = Math.abs(e.clientX - downPos.x);
+  const dy = Math.abs(e.clientY - downPos.y);
+  if (dx > 6 || dy > 6) return; // drag, not click
+
+  if (focusedMode) return;
+
+  raycaster.setFromCamera(mouse, camera);
+  const meshes = cans.flatMap(c => c.children);
+  const hits = raycaster.intersectObjects(meshes);
+  if (hits.length > 0) {
+    let obj = hits[0].object;
+    while (obj && !obj.userData.food) obj = obj.parent;
+    if (obj && !obj.userData.dimmed) focusCan(obj);
+  }
+}
+
+window.addEventListener('pointermove', onPointerMove);
+window.addEventListener('pointerdown', onPointerDown);
+window.addEventListener('pointerup', onPointerUp);
+
+// ═══ Focus animation ═══
+function focusCan(can) {
+  selectedCan = can;
+  focusedMode = true;
+  controls.enabled = false;
+  document.getElementById('back-btn').classList.add('show');
+
+  // Dim others
+  cans.forEach(c => {
+    if (c !== can) {
+      c.userData.dimmed = true;
+      c.children.forEach(ch => {
+        if (ch.material) {
+          if (ch.material.map) ch.material.opacity = 0.15;
+          else ch.material.opacity = 0.15;
+          ch.material.transparent = true;
+        }
+      });
+    }
+  });
+
+  // Animate camera closer
+  const targetPos = new THREE.Vector3(can.position.x * 0.3, can.position.y + 0.5, can.position.z + 4.5);
+  animateCamera(targetPos, can.position, 800);
+
+  // Show detail
+  showDetail(can.userData.food);
+}
+
+function unfocus() {
+  if (!selectedCan) return;
+  focusedMode = false;
+  controls.enabled = true;
+  document.getElementById('back-btn').classList.remove('show');
+  document.getElementById('detail').classList.remove('show');
+
+  // Restore cans
+  cans.forEach(c => {
+    c.userData.dimmed = false;
+    c.children.forEach(ch => {
+      if (ch.material) {
+        ch.material.opacity = 1;
+        ch.material.transparent = false;
+      }
+    });
+    c.scale.setScalar(1);
+    c.userData.ring.material.opacity = 0;
+  });
+
+  selectedCan = null;
+  animateCamera(CAM_INIT, CAM_LOOK, 800);
+}
+
+function animateCamera(toPos, toTarget, duration) {
+  cameraAnimating = true;
+  const fromPos = camera.position.clone();
+  const fromTarget = controls.target.clone();
+  const start = performance.now();
+
+  function step() {
+    const t = Math.min((performance.now() - start) / duration, 1);
+    const e = t < 0.5 ? 2*t*t : 1 - Math.pow(-2*t+2, 2)/2; // easeInOutQuad
+    camera.position.lerpVectors(fromPos, toPos, e);
+    controls.target.lerpVectors(fromTarget, toTarget, e);
+    controls.update();
+    if (t < 1) requestAnimationFrame(step);
+    else cameraAnimating = false;
+  }
+  step();
+}
+
+// ═══ Detail Panel ═══
+function showDetail(food) {
+  const sm = STAGE_META[food.stageKey];
+  const accentHex = '#' + food.accent.toString(16).padStart(6,'0');
+  const panel = document.getElementById('detail');
+  const inner = document.getElementById('detail-inner');
+
+  inner.innerHTML = `
+    <div class="dh">
+      <div class="dh-icon" style="background:${accentHex}">${sm.icon}</div>
+      <div>
+        <h2>${food.name}</h2>
+        <p>${food.brand} · ${food.origin}</p>
+        <span class="dh-tag" style="background:${accentHex}">${food.stage}</span>
       </div>
     </div>
-  </nav>
-
-  <!-- Hero -->
-  <section class="hero" id="hero">
-    <div class="hero-badge">
-      <span>🐾</span>
-      <span>Ragdoll · Cat Food Museum · v2.0</span>
+    <div class="dn">
+      <div class="dn-card"><span class="dn-label">粗蛋白</span><span class="dn-val" style="color:${accentHex}">${food.protein}</span></div>
+      <div class="dn-card"><span class="dn-label">粗脂肪</span><span class="dn-val" style="color:${accentHex}">${food.fat}</span></div>
+      <div class="dn-card"><span class="dn-label">阶段</span><span class="dn-val" style="color:${accentHex};font-size:.8rem">${sm.name}</span></div>
     </div>
-    <h1><span class="cat">🐱</span> 布偶猫猫粮展览馆</h1>
-    <p class="hero-sub">
-      20 款精选猫粮 · 5 层 3D 展架陈列 · 营养成分透明对比<br>
-      从幼猫到老年，从进口到国货，一站式选粮指南
-    </p>
-    <div class="hero-stats">
-      <div class="hero-stat">
-        <span class="num">20</span>
-        <span class="label">款猫粮展品</span>
-      </div>
-      <div class="hero-stat">
-        <span class="num">5</span>
-        <span class="label">层展架分区</span>
-      </div>
-      <div class="hero-stat">
-        <span class="num">6</span>
-        <span class="label">个适用阶段</span>
-      </div>
-      <div class="hero-stat">
-        <span class="num">8</span>
-        <span class="label">项营养指标</span>
-      </div>
+    <div class="d-fit"><span>🎯</span><span>${food.fit}</span></div>
+    <div class="d-pc">
+      <div class="d-pros"><h4>✅ 优点</h4><ul>${food.pros.map(p=>`<li>${p}</li>`).join('')}</ul></div>
+      <div class="d-cons"><h4>⚠️ 注意</h4><ul>${food.cons.map(c=>`<li>${c}</li>`).join('')}</ul></div>
     </div>
-  </section>
+  `;
 
-  <!-- 品种特点 -->
-  <section class="section" id="breed">
-    <div class="section-title">
-      <h2>布偶猫 · <span>品种特点</span></h2>
-      <p>了解你的猫，才能选对粮</p>
-    </div>
-    <div class="breed-section">
-      <div class="breed-grid">
-        <div class="breed-card">
-          <div class="breed-icon">⚖️</div>
-          <span class="value">4.5-9 kg</span>
-          <h4>体重</h4>
-          <p>公猫偏重，母猫较轻</p>
-        </div>
-        <div class="breed-card">
-          <div class="breed-icon">🎂</div>
-          <span class="value">12-17 年</span>
-          <h4>寿命</h4>
-          <p>室内科学喂养可达17年</p>
-        </div>
-        <div class="breed-card">
-          <div class="breed-icon">✨</div>
-          <span class="value">中长毛</span>
-          <h4>毛发</h4>
-          <p>丝质柔顺，需定期梳理</p>
-        </div>
-        <div class="breed-card">
-          <div class="breed-icon">💕</div>
-          <span class="value">温顺亲人</span>
-          <h4>性格</h4>
-          <p>粘人型选手，适合家庭</p>
-        </div>
-        <div class="breed-card">
-          <div class="breed-icon">🩺</div>
-          <span class="value">肠胃敏感</span>
-          <h4>肠胃</h4>
-          <p>易软便，需益生菌调理</p>
-        </div>
-        <div class="breed-card">
-          <div class="breed-icon">🎀</div>
-          <span class="value">大型猫</span>
-          <h4>体型</h4>
-          <p>骨架大，成熟期3-4年</p>
-        </div>
-      </div>
-    </div>
-  </section>
+  setTimeout(() => panel.classList.add('show'), 100);
+}
 
-  <!-- 猫粮展厅 -->
-  <section class="section" id="exhibits">
-    <div class="section-title">
-      <h2>猫粮 · <span>展厅</span></h2>
-      <p>20 款精选布偶猫猫粮，5 层展架按阶段分区陈列，点击罐体查看详情</p>
-    </div>
+document.getElementById('detail-close').addEventListener('click', unfocus);
+document.getElementById('back-btn').addEventListener('click', unfocus);
+document.addEventListener('keydown', e => { if (e.key === 'Escape') unfocus(); });
 
-    <!-- 筛选条 -->
-    <div class="filter-bar" id="filterBar"></div>
+// ═══ Filter ═══
+let currentFilter = 'all';
 
-    <!-- 展架 -->
-    <div class="shelf-container" id="shelfContainer"></div>
-  </section>
+function applyFilter(key) {
+  currentFilter = key;
+  cans.forEach(c => {
+    const food = c.userData.food;
+    const match = key === 'all' || food.stageKey === key ||
+      (key === 'senior' && c.userData.row === 3 && c.userData.col < 2) ||
+      (key === 'raw' && c.userData.row === 3 && c.userData.col >= 2);
+    c.userData.dimmed = !match && !focusedMode;
+    c.children.forEach(ch => {
+      if (ch.material) {
+        if (!focusedMode || c === selectedCan) {
+          ch.material.opacity = match ? 1 : 0.15;
+          ch.material.transparent = !match;
+        }
+      }
+    });
+  });
 
-  <!-- 营养知识馆 -->
-  <section class="section" id="knowledge">
-    <div class="section-title">
-      <h2>营养 · <span>知识馆</span></h2>
-      <p>布偶猫科学喂养的 8 个关键指标</p>
-    </div>
-    <div class="knowledge-grid" id="knowledgeGrid"></div>
-  </section>
+  // Update pills
+  document.querySelectorAll('.fp').forEach(p => {
+    p.classList.toggle('active', p.dataset.filter === key);
+  });
 
-  <!-- 综合对比表 -->
-  <section class="section compare-section" id="compare">
-    <div class="section-title">
-      <h2>综合 · <span>对比表</span></h2>
-      <p>一表掌握 20 款猫粮核心数据</p>
-    </div>
-    <table class="compare-table">
-      <thead>
-        <tr>
-          <th>品牌</th>
-          <th>产地</th>
-          <th>粗蛋白</th>
-          <th>粗脂肪</th>
-          <th>阶段</th>
-        </tr>
-      </thead>
-      <tbody id="compareBody"></tbody>
-    </table>
-  </section>
+  // Update stage labels
+  document.querySelectorAll('.sl').forEach(s => {
+    s.classList.toggle('active', s.dataset.stage === key);
+  });
+}
 
-  <!-- 详情面板 -->
-  <div class="detail-panel" id="detailPanel"></div>
+// Build filter pills
+const filtersEl = document.getElementById('filters');
+const filterOptions = [
+  {key:'all', label:'全部', color:'#d4a574'},
+  {key:'kitten', label:'幼猫', color:STAGE_META.kitten.hex},
+  {key:'adult', label:'成猫', color:STAGE_META.adult.hex},
+  {key:'special', label:'功能型', color:STAGE_META.special.hex},
+  {key:'senior', label:'老年', color:STAGE_META.senior.hex},
+  {key:'raw', label:'冻干', color:STAGE_META.raw.hex},
+  {key:'domestic', label:'国货', color:STAGE_META.domestic.hex}
+];
+filtersEl.innerHTML = filterOptions.map(f =>
+  `<button class="fp" data-filter="${f.key}"><span class="dot" style="background:${f.color}"></span>${f.label}</button>`
+).join('');
+filtersEl.querySelectorAll('.fp').forEach(btn => {
+  btn.addEventListener('click', () => applyFilter(btn.dataset.filter));
+});
 
-  <!-- 页脚 -->
-  <footer class="footer">
-    <h3>🐱 布偶猫猫粮展览馆</h3>
-    <p>Ragdoll · Cat Food Museum · v2.0</p>
-    <p>本网站信息仅供参考，具体选粮请结合猫咪个体差异并咨询兽医</p>
-    <div class="disclaimer">
-      免责声明：本站展示的猫粮品牌信息均来源于公开资料和用户反馈，不构成医疗建议。<br>
-      猫粮配方可能随时间调整，请以实际产品包装信息为准。如有特殊健康问题，请咨询专业兽医。
-    </div>
-  </footer>
+// Build stage labels
+const stageLabelsEl = document.getElementById('stage-labels');
+stageLabelsEl.innerHTML = ROW_LABELS.map((r, i) => {
+  const meta = STAGE_META[r.key] || {hex:'#b07060'};
+  if (r.key === 'mixed') meta = {hex:'#b07060'};
+  return `<div class="sl" data-stage="${r.key}" style="--c:${meta.hex}">${r.label}</div>`;
+}).join('');
+stageLabelsEl.querySelectorAll('.sl').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (btn.dataset.stage === 'kitten') applyFilter('kitten');
+    else if (btn.dataset.stage === 'adult') applyFilter('adult');
+    else if (btn.dataset.stage === 'special') applyFilter('special');
+    else if (btn.dataset.stage === 'domestic') applyFilter('domestic');
+    else applyFilter('all');
+  });
+});
 
-  <script src="app.js?v=2"></script>
+// ═══ Animation Loop ═══
+let time = 0;
+function animate() {
+  requestAnimationFrame(animate);
+  time += 0.016;
+
+  // Breathing spotlight
+  topLight.intensity = 2.0 + Math.sin(time * 0.8) * 0.5;
+
+  // Selected can: float + rotate + glow
+  if (selectedCan && focusedMode) {
+    selectedCan.position.y = selectedCan.userData.originalY + Math.sin(time * 1.5) * 0.08;
+    selectedCan.rotation.y += 0.015;
+    selectedCan.userData.ring.material.opacity = 0.5 + Math.sin(time * 2) * 0.2;
+    selectedCan.userData.ring.scale.setScalar(1 + Math.sin(time * 2) * 0.1);
+  }
+
+  // Hovered can subtle rotate
+  if (hoveredCan && !focusedMode) {
+    hoveredCan.rotation.y += 0.01;
+  }
+
+  controls.update();
+  renderer.render(scene, camera);
+}
+
+// ═══ Resize ═══
+window.addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight;
+  camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+// ═══ Start ═══
+animate();
+document.getElementById('loading').classList.add('hide');
+setTimeout(() => document.getElementById('loading').remove(), 800);
+
+console.log('🐱 布偶猫猫粮3D展览馆已加载 · Three.js r160 · 20款猫粮 · 5层展架');
+</script>
 </body>
 </html>
