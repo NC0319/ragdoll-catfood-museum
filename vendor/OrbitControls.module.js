@@ -1,3 +1,4 @@
+(function(){
 var EventDispatcher = window.THREE.EventDispatcher;
 var MOUSE = window.THREE.MOUSE;
 var Quaternion = window.THREE.Quaternion;
@@ -1413,3 +1414,4 @@ class OrbitControls extends EventDispatcher {
 }
 
 window.OrbitControls = OrbitControls;
+})();
