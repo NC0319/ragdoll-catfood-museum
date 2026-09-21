@@ -1,404 +1,270 @@
 /**
- * 布偶猫猫粮展览馆 · 交互逻辑
- * Ragdoll · Cat Food Museum
+ * 布偶猫猫粮展览馆 · 交互逻辑 v2
+ * 基于技术文档重新设计 · 20款猫粮 · 5层展架 · 伪3D视觉
  */
 
 (function () {
   'use strict';
 
-  // ═══ 展品数据 ═══
-  const EXHIBITS = [
-    {
-      id: 'royal-canin-ra32',
-      name: '皇家 RA32 布偶猫专用粮',
-      brand: 'Royal Canin 皇家',
-      origin: '法国',
-      type: '成猫专用',
-      protein: '32%',
-      fat: '14%',
-      price: '¥225 / 2kg',
-      rating: 9.2,
-      tags: ['美毛', '护肠胃', '大颗粒', '经典品牌'],
-      color: '#d4a574',
-      icon: '🐱',
-      desc: '专为布偶猫生理结构设计的成猫粮，含鱼油（Omega-3）与甜菜浆，改善毛发光泽并促进毛球排出。粽子形大颗粒减缓进食速度，减少呕吐。',
-      ingredients: ['鸡胸肉', '鸡肝', '深海鱼油', '蛋粉', '甜菜浆', '燕麦纤维', '益生元FOS'],
-      nutrition: { protein: 32, fat: 14, fiber: 5, moisture: 8, omega3: 1.2, taurine: 0.15 },
-      pros: ['品牌历史悠久，品控稳定', '大颗粒设计减缓进食', '添加益生元护肠胃', '美毛效果显著'],
-      cons: ['蛋白质含量偏低(32%)', '含部分谷物成分', '价格中等偏上'],
-      scene: '适合1岁以上布偶猫，尤其换毛期、肠胃敏感者'
-    },
-    {
-      id: 'orijen-six-fish',
-      name: '渴望 六种鱼无谷猫粮',
-      brand: 'Orijen 渴望',
-      origin: '加拿大',
-      type: '全阶段',
-      protein: '40%+',
-      fat: '20%',
-      price: '¥680 / 5.4kg',
-      rating: 9.6,
-      tags: ['高蛋白', '无谷', '深海鱼', '美毛'],
-      color: '#4a90d9',
-      icon: '🐟',
-      desc: '六种深海鱼配方，提供丰富Omega-3脂肪酸，蛋白质含量40%+，食材达到人类食用级别。无谷物配方降低过敏风险，适口性极佳。',
-      ingredients: ['新鲜三文鱼', '鲱鱼', '比目鱼', '鲶鱼', '梭鱼', '红鱼', '鱼油'],
-      nutrition: { protein: 40, fat: 20, fiber: 3, moisture: 10, omega3: 2.8, taurine: 0.2 },
-      pros: ['蛋白质极高，营养密度大', '六种深海鱼，Omega-3丰富', '无谷物无人工添加剂', '美毛效果顶级'],
-      cons: ['价格昂贵', '高脂肪可能引起部分猫软便', '假货较多需注意渠道'],
-      scene: '预算充足、追求顶级营养的布偶猫家庭'
-    },
-    {
-      id: 'acana-farm',
-      name: '爱肯拿 农场盛宴猫粮',
-      brand: 'Acana 爱肯拿',
-      origin: '加拿大',
-      type: '全阶段',
-      protein: '37%',
-      fat: '16%',
-      price: '¥480 / 5.4kg',
-      rating: 9.0,
-      tags: ['高蛋白', '性价比', '多肉源', '无谷'],
-      color: '#7cb342',
-      icon: '🥩',
-      desc: '新鲜鸡肉+火鸡配方，动物蛋白含量75%。与渴望同属Champion Petfoods集团，价格低30%，性价比突出。营养均衡，适口性好。',
-      ingredients: ['新鲜鸡肉', '火鸡肉', '鸡肝', '鸡心', '鲱鱼', '鱼油', '南瓜'],
-      nutrition: { protein: 37, fat: 16, fiber: 4, moisture: 10, omega3: 1.0, taurine: 0.18 },
-      pros: ['性价比极高（对比渴望）', '多肉源营养均衡', '无谷物低敏', '适口性好'],
-      cons: ['蛋白质略低于渴望', '多肉源可能不适合极度敏感猫', '颗粒偏小'],
-      scene: '追求高品质但预算有限的布偶猫家庭'
-    },
-    {
-      id: 'instinct-raw',
-      name: '百利 无谷鸡猫粮（生鲜涂层）',
-      brand: 'Instinct 百利',
-      origin: '美国',
-      type: '全阶段',
-      protein: '47%',
-      fat: '17%',
-      price: '¥750 / 10kg',
-      rating: 9.4,
-      tags: ['超高蛋白', '无谷', '单一肉源', '冻干涂层'],
-      color: '#e65100',
-      icon: '🐔',
-      desc: '纯鲜鸡肉配方，动物原料85%+，蛋白质高达47%。颗粒表面喷涂鲜肉冻干碎，适口性极佳。添加蒙脱土有助改善软便。',
-      ingredients: ['鲜鸡肉', '鸡肉粉', '火鸡肉粉', '鲱鱼粉', '鸡脂', '蒙脱土', '鱼油'],
-      nutrition: { protein: 47, fat: 17, fiber: 3, moisture: 9, omega3: 0.8, taurine: 0.2 },
-      pros: ['蛋白质含量行业顶尖(47%)', '单一肉源低敏', '冻干涂层适口性极佳', '添加蒙脱土改善软便'],
-      cons: ['价格较高', '颗粒小，易吃快导致呕吐', '蒙脱土成分有争议'],
-      scene: '追求极高蛋白、能监督进食速度的布偶猫家长'
-    },
-    {
-      id: 'halo-spot',
-      name: '自然光环 鲜鸡肉猫粮',
-      brand: 'Halo 自然光环',
-      origin: '美国',
-      type: '全阶段',
-      protein: '33%',
-      fat: '15%',
-      price: '¥550 / 10kg',
-      rating: 8.6,
-      tags: ['单一肉源', '低敏', '稳定', '适口性一般'],
-      color: '#26a69a',
-      icon: '🌿',
-      desc: '鲜鸡肉为主，单一肉源配方。蛋白质33%，稳定不软便，但适口性一般。适合对多肉源过敏的布偶猫。',
-      ingredients: ['鲜鸡肉', '鸡肉粉', '鸡脂', '蛋粉', '豌豆', '鱼油', '亚麻籽'],
-      nutrition: { protein: 33, fat: 15, fiber: 5, moisture: 10, omega3: 0.6, taurine: 0.15 },
-      pros: ['单一肉源，低敏安全', '软便改善效果稳定', '配方简洁透明'],
-      cons: ['适口性一般', '蛋白质偏低', '含豌豆成分'],
-      scene: '多肉源过敏、需要极低敏配方的布偶猫'
-    },
-    {
-      id: 'farmina-n-d',
-      name: '法米娜 N&D 野猪猫粮',
-      brand: 'Farmina 法米娜',
-      origin: '意大利',
-      type: '全阶段',
-      protein: '44%',
-      fat: '20%',
-      price: '¥680 / 5kg',
-      rating: 9.1,
-      tags: ['高蛋白', '无谷', '低温慢烘', '高适口性'],
-      color: '#5c6bc0',
-      icon: '🍖',
-      desc: '野猪+鸡肉配方，动物原料占80%+。采用低温慢烘工艺保留营养活性。蛋白质44%，适口性极佳，但高脂肪可能引起部分布偶软便。',
-      ingredients: ['野猪肉', '鸡肉', '鸡脂', '鱼油', '南瓜', '亚麻籽', '益生元'],
-      nutrition: { protein: 44, fat: 20, fiber: 3, moisture: 9, omega3: 1.5, taurine: 0.18 },
-      pros: ['高蛋白高营养', '低温慢烘保留活性', '适口性极佳', '无谷物无人工添加剂'],
-      cons: ['高脂肪可能导致软便', '价格昂贵', '野猪肉源可能过敏'],
-      scene: '愿意搭配冻干/罐头平衡的高端用户'
-    },
-    {
-      id: 'ceshi-yikou',
-      name: '诚实一口 P40 猫粮',
-      brand: '诚实一口',
-      origin: '中国',
-      type: '全阶段',
-      protein: '40%',
-      fat: '16%',
-      price: '¥168 / 1.5kg',
-      rating: 8.8,
-      tags: ['双层颗粒', '美毛', '国产', '高性价比'],
-      color: '#ff7043',
-      icon: '✨',
-      desc: '鸡肉为主原料，添加三文鱼蛋白肽和EPAX专利鱼油，美毛效果出色。双层结构颗粒——外层酥脆，内嵌冻干夹心。表面干爽无油，降低黑下巴发生率。',
-      ingredients: ['鲜鸡肉', '三文鱼蛋白肽', 'EPAX鱼油', '鸡脂', '冻干夹心', '蛋黄卵磷脂'],
-      nutrition: { protein: 40, fat: 16, fiber: 4, moisture: 9, omega3: 1.8, taurine: 0.16 },
-      pros: ['美毛效果显著（专利鱼油）', '双层颗粒适口性好', '表面干爽预防黑下巴', '国产性价比高'],
-      cons: ['品牌较新，长期数据少', '部分批次适口性波动', '渠道有限'],
-      scene: '注重毛发管理、预算有限的布偶猫家庭'
-    },
-    {
-      id: 'xifei',
-      name: '希喂 烘焙猫粮',
-      brand: '希喂 Ceshi',
-      origin: '中国',
-      type: '全阶段',
-      protein: '42%',
-      fat: '15%',
-      price: '¥138 / 1.5kg',
-      rating: 8.9,
-      tags: ['单一肉源', '烘焙粮', '益生元', '低敏'],
-      color: '#66bb6a',
-      icon: '🌱',
-      desc: '与汉欧联合研发，婴儿奶粉级无菌生产环境。鲜鸡肉为主原料，动物性原料占比82%。三阶渐进式轻度烘焙技术，消化吸收率95.82%。添加益生元和后生元呵护肠胃。',
-      ingredients: ['鲜鸡肉', '鸡肝', '鸡心', '鱼油', '益生元FOS', '后生元', '海带粉', '牛磺酸'],
-      nutrition: { protein: 42, fat: 15, fiber: 4, moisture: 9, omega3: 1.2, taurine: 0.18 },
-      pros: ['单一肉源低敏', '烘焙工艺营养留存高', '消化率95.82%', '无菌生产品控严'],
-      cons: ['品牌知名度低', '购买渠道有限', '适口性个体差异大'],
-      scene: '肠胃敏感、需要低敏配方的小布偶'
-    },
-    {
-      id: 'chani',
-      name: '馋不腻 益生菌猫粮',
-      brand: '馋不腻',
-      origin: '中国',
-      type: '全阶段',
-      protein: '42%',
-      fat: '14%',
-      price: '¥120 / 1.5kg',
-      rating: 8.5,
-      tags: ['益生菌', '无谷', '美毛', '高性价比'],
-      color: '#ffa726',
-      icon: '🦠',
-      desc: '76%含肉量+30亿活性益生菌（枯草芽孢杆菌），无谷低敏配方。粗蛋白42%，脂肪14%，营养与消化负担平衡良好。含Omega-3/Omega-6靓丽毛发。',
-      ingredients: ['鸡肉', '鸡肝', '鱼油', '枯草芽孢杆菌', '果寡糖', '丝兰粉', '亚麻籽'],
-      nutrition: { protein: 42, fat: 14, fiber: 5, moisture: 10, omega3: 1.0, taurine: 0.15 },
-      pros: ['益生菌护肠胃效果好', '性价比极高', '美毛成分丰富', '市场口碑稳定'],
-      cons: ['含肉量76%偏低', '部分猫咪不爱吃', '原料透明度一般'],
-      scene: '预算有限、需要调理肠胃的布偶猫'
-    },
-    {
-      id: 'nulo',
-      name: 'Nulo 高蛋白猫粮',
-      brand: 'Nulo',
-      origin: '美国',
-      type: '全阶段',
-      protein: '40%',
-      fat: '14%',
-      price: '¥420 / 5kg',
-      rating: 8.7,
-      tags: ['高蛋白', '低脂', '体重管理', '美毛'],
-      color: '#42a5f5',
-      icon: '💪',
-      desc: '高蛋白质(40%)、低脂肪(14%)配方，适合需要体重管理的布偶猫。添加BC30益生菌促消化，毛发状态改善明显。适口性佳，布偶猫普遍接受度高。',
-      ingredients: ['鸡肉', '火鸡肉', '鲱鱼粉', '鸡脂', '鱼油', 'BC30益生菌', '蔓越莓'],
-      nutrition: { protein: 40, fat: 14, fiber: 4, moisture: 10, omega3: 0.9, taurine: 0.16 },
-      pros: ['高蛋白低脂，体重管理友好', '添加BC30专利益生菌', '毛发改善效果明显', '适口性好'],
-      cons: ['品牌知名度一般', '部分渠道假货多', '原料透明度中等'],
-      scene: '需要体重管理、毛发需要改善的布偶猫'
-    },
-    {
-      id: 'wellness-core',
-      name: 'Wellness CORE 无谷猫粮',
-      brand: 'Wellness',
-      origin: '美国',
-      type: '全阶段',
-      protein: '38%',
-      fat: '18%',
-      price: '¥520 / 5kg',
-      rating: 8.8,
-      tags: ['无谷', '高蛋白', '抗氧化', '关节保护'],
-      color: '#ec407a',
-      icon: '🛡️',
-      desc: '无谷物高蛋白配方，蛋白质38%。添加葡萄糖胺和软骨素支持关节健康，适合中大型猫咪如布偶猫。富含抗氧化剂，增强免疫力。',
-      ingredients: ['鸡肉', '火鸡肉', '鲱鱼粉', '鸡脂', '鱼油', '葡萄糖胺', '软骨素', '蔓越莓'],
-      nutrition: { protein: 38, fat: 18, fiber: 4, moisture: 11, omega3: 0.8, taurine: 0.17 },
-      pros: ['关节保护成分（葡萄糖胺+软骨素）', '抗氧化配方增强免疫', '无谷物低敏', '适合中大型猫'],
-      cons: ['脂肪偏高(18%)', '价格中等偏上', '适口性个体差异'],
-      scene: '关注关节健康的中大型布偶猫'
-    },
-    {
-      id: 'tiki-cat',
-      name: 'Tiki Cat 诞生之地猫粮',
-      brand: 'Tiki Cat',
-      origin: '美国',
-      type: '全阶段',
-      protein: '44%',
-      fat: '15%',
-      price: '¥580 / 4kg',
-      rating: 9.0,
-      tags: ['超高蛋白', '低碳水', '海鲜', '湿粮风格'],
-      color: '#26c6da',
-      icon: '🐠',
-      desc: '以海鲜为核心的高蛋白低碳水猫粮，蛋白质44%。配料表前几位全是真实鱼肉，几乎不含碳水化合物。适口性极佳，尤其适合挑食的布偶猫。',
-      ingredients: ['新鲜三文鱼', '鲱鱼', '鳕鱼', '鸡肝', '鱼汤', '鱼油', '牛磺酸'],
-      nutrition: { protein: 44, fat: 15, fiber: 2, moisture: 12, omega3: 2.0, taurine: 0.22 },
-      pros: ['蛋白质极高(44%)', '碳水极低', '纯海鲜配方Omega-3丰富', '适口性极佳'],
-      cons: ['纯海鲜可能导致挑食', '价格较高', '部分猫咪对鱼类过敏'],
-      scene: '挑食、需要高蛋白低碳水的布偶猫'
-    }
+  // ═══ 阶段定义 ═══
+  const STAGE_META = {
+    kitten:   { name: '幼猫期',   color: '#e9c46a', icon: '🐱', desc: '4-12月龄 · 高蛋白高脂肪' },
+    adult:    { name: '成猫期',   color: '#7fae7a', icon: '🐈', desc: '1-7岁 · 营养均衡维持' },
+    special:  { name: '功能型',   color: '#6f9bc9', icon: '💊', desc: '泌尿/控重/化毛处方' },
+    senior:   { name: '老年期',   color: '#c98b5b', icon: '🐾', desc: '7岁+ · 易消化低负担' },
+    raw:      { name: '冻干高肉', color: '#d4756b', icon: '🥩', desc: '风干/冻干 · 高含肉量' },
+    domestic: { name: '国货精选', color: '#5bb0a8', icon: '⭐', desc: '国产优质品牌' }
+  };
+
+  // ═══ 20款猫粮数据 ═══
+  const FOODS = [
+    // 幼猫期 4款
+    { id:1, name:'皇家 幼猫粮 K36', en:'Royal Canin K36', brand:'皇家 Royal Canin', origin:'法国', stage:'幼猫期 4-12月', stageKey:'kitten', protein:'34%', fat:'20%', body:'#f5ead0', accent:'#c4915c', fit:'4-12月龄幼猫，需高能量高蛋白支持生长发育', pros:['品牌历史悠久品控稳定','K36专为幼猫设计','适口性优秀','添加益生元支持消化'], cons:['含谷物成分','蛋白质34%偏低','价格中等偏上'] },
+    { id:2, name:'渴望 幼猫无谷', en:'Orijen Kitten', brand:'渴望 Orijen', origin:'加拿大', stage:'幼猫期 / 全阶段', stageKey:'kitten', protein:'40%', fat:'20%', body:'#f5ead0', accent:'#5b8c5a', fit:'追求顶级营养的幼猫家庭，预算充足', pros:['蛋白质40%极高','全阶段可用','无谷物无人工添加','适口性好'], cons:['价格昂贵','高脂肪可能软便','假货多需注意渠道'] },
+    { id:3, name:'诚实一口 P40 幼猫粮', en:'Honest Bite P40', brand:'诚实一口', origin:'中国', stage:'幼猫期', stageKey:'kitten', protein:'40%', fat:'20%', body:'#f5ead0', accent:'#e07856', fit:'注重高蛋白的幼猫，预算有限的国货支持者', pros:['国产高蛋白40%','双层颗粒适口性好','添加鱼油美毛','性价比高'], cons:['品牌较新长期数据少','渠道有限','批次波动'] },
+    { id:4, name:'卫仕 幼猫粮', en:'WOWO Kitten', brand:'卫仕 WOWO', origin:'中国', stage:'幼猫期', stageKey:'kitten', protein:'38%', fat:'18%', body:'#f5ead0', accent:'#8b6d4a', fit:'需要均衡营养的幼猫，注重肠胃调理', pros:['38%蛋白适中均衡','添加益生菌护肠','国产品控稳定','适口性好'], cons:['含谷物','蛋白质不够高','品牌知名度一般'] },
+
+    // 成猫期 4款
+    { id:5, name:'渴望 六种鱼', en:'Orijen Six Fish', brand:'渴望 Orijen', origin:'加拿大', stage:'成猫期', stageKey:'adult', protein:'40%', fat:'20%', body:'#f5ead0', accent:'#4a7a9c', fit:'追求顶级营养的成猫，美毛需求强烈', pros:['六种深海鱼Omega-3极高','蛋白质40%+','无谷物','美毛效果顶级'], cons:['价格昂贵','高脂可能软便','假货多'] },
+    { id:6, name:'爱肯拿 海洋盛宴', en:'Acana Sea', brand:'爱肯拿 Acana', origin:'加拿大', stage:'成猫期', stageKey:'adult', protein:'37%', fat:'18%', body:'#f5ead0', accent:'#3a6b8a', fit:'追求高品质但预算略低于渴望的成猫', pros:['性价比高(对比渴望)','多鱼源营养均衡','无谷物低敏','适口性好'], cons:['蛋白质略低于渴望','多肉源敏感猫注意','颗粒偏小'] },
+    { id:7, name:'冠能 成猫粮', en:'Pro Plan Adult', brand:'冠能 Pro Plan', origin:'美国', stage:'成猫期', stageKey:'adult', protein:'36%', fat:'16%', body:'#f5ead0', accent:'#6b8e5a', fit:'需要稳定均衡营养的成猫，注重消化健康', pros:['品牌大厂品控稳','添加益生元益生菌','适口性稳定','价格亲民'], cons:['含谷物玉米','蛋白质36%中等','原料透明度一般'] },
+    { id:8, name:'网易严选 全价成猫粮', en:'Yanxuan Adult', brand:'网易严选', origin:'中国', stage:'成猫期', stageKey:'adult', protein:'38%', fat:'18%', body:'#f5ead0', accent:'#5a7a6b', fit:'追求性价比的国货用户，成猫日常喂养', pros:['38%蛋白性价比高','无谷物配方','供应链透明','适口性好'], cons:['品牌跨界经验少','部分猫不吃','渠道单一'] },
+
+    // 功能型 4款
+    { id:9, name:'希尔思 c/d 泌尿处方粮', en:"Hill's c/d", brand:'希尔思 Hill\'s', origin:'美国', stage:'功能 · 泌尿', stageKey:'special', protein:'32%', fat:'15%', body:'#f5ead0', accent:'#4a6f9c', fit:'有泌尿系统问题的猫咪，需处方管理', pros:['泌尿处方权威','有效预防结石复发','兽医推荐度高','品控严格'], cons:['需兽医处方','蛋白质32%偏低','价格高','适口性一般'] },
+    { id:10, name:'皇家 泌尿 S/O', en:'Royal Canin S/O', brand:'皇家 Royal Canin', origin:'法国', stage:'功能 · 泌尿', stageKey:'special', protein:'34%', fat:'15%', body:'#f5ead0', accent:'#5a8aaa', fit:'有尿路结石风险的猫咪，溶解鸟粪石', pros:['溶解鸟粪石结石','皇家处方线权威','适口性好','渠道广泛'], cons:['需遵医嘱使用','蛋白质34%偏低','长期使用需监测'] },
+    { id:11, name:'冠能 绝育猫体重管理', en:'Pro Plan Sterilized', brand:'冠能 Pro Plan', origin:'美国', stage:'功能 · 控重', stageKey:'special', protein:'34%', fat:'12%', body:'#f5ead0', accent:'#7a8a4a', fit:'已绝育、需控制体重的成猫', pros:['低脂12%控重友好','高纤维增加饱腹感','添加L-肉碱','价格亲民'], cons:['蛋白质34%偏低','适口性一般','含谷物'] },
+    { id:12, name:'皇家 长毛猫化毛粮', en:'Royal Canin Hairball', brand:'皇家 Royal Canin', origin:'法国', stage:'功能 · 化毛', stageKey:'special', protein:'33%', fat:'14%', body:'#f5ead0', accent:'#9c7b5a', fit:'长毛猫（尤其布偶猫）有毛球问题', pros:['专为长毛猫设计','添加甜菜浆促排毛球','适口性好','渠道广泛'], cons:['蛋白质33%偏低','含谷物','价格中等'] },
+
+    // 老年期 2款 + 冻干 2款
+    { id:13, name:'希尔思 老年猫粮', en:"Hill's Senior 7+", brand:"希尔思 Hill's", origin:'美国', stage:'老年期 7+', stageKey:'senior', protein:'30%', fat:'14%', body:'#f5ead0', accent:'#b8784a', fit:'7岁以上老年猫，需易消化低负担', pros:['专为老年猫设计','易消化配方','添加关节保护成分','品控严格'], cons:['蛋白质30%偏低','适口性一般','价格较高'] },
+    { id:14, name:'渴望 老年猫粮', en:'Orijen Senior', brand:'渴望 Orijen', origin:'加拿大', stage:'老年期 7+', stageKey:'senior', protein:'38%', fat:'15%', body:'#f5ead0', accent:'#a8734a', fit:'7岁以上老年猫，追求高蛋白低脂', pros:['蛋白质38%远超同类','低脂15%控体重','无谷物','适口性好'], cons:['价格昂贵','老年猫肠胃可能不适应高蛋白','假货多'] },
+    { id:15, name:'巅峰 风干粮', en:'Ziwi Peak', brand:'巅峰 Ziwi Peak', origin:'新西兰', stage:'全阶段 · 高肉', stageKey:'raw', protein:'38%', fat:'30%', body:'#f5ead0', accent:'#c45a4a', fit:'追求顶级食材的全阶段猫，预算充足', pros:['风干工艺保留营养','96%含肉量','单一肉源低敏','适口性极佳'], cons:['价格极昂贵','脂肪30%偏高','能量密度大需控量'] },
+    { id:16, name:'K9 主食冻干', en:'K9 Natural', brand:'K9 Natural', origin:'新西兰', stage:'全阶段 · 高肉', stageKey:'raw', protein:'45%', fat:'25%', body:'#f5ead0', accent:'#b84a3a', fit:'追求冻干生骨肉喂养的全阶段猫', pros:['蛋白质45%行业顶尖','冻干锁鲜','含内脏骨骼完整','可复水喂食'], cons:['价格极贵','需复水耗时','高脂高能量需控量','保存需防潮'] },
+
+    // 国货精选 4款
+    { id:17, name:'弗列加特 高蛋白鲜肉粮', en:'FREGATE', brand:'弗列加特 FREGATE', origin:'中国', stage:'全阶段 · 高鲜肉', stageKey:'domestic', protein:'40%', fat:'18%', body:'#f5ead0', accent:'#3a9b8a', fit:'追求高鲜肉含量的国货用户，全阶段猫', pros:['40%高蛋白','70%鲜肉含量','无谷物','供应链透明'], cons:['品牌较新','价格中等偏上','渠道有限'] },
+    { id:18, name:'蓝氏 鲜肉幼猫粮', en:'LEGEND SANDY', brand:'蓝氏 LEGEND SANDY', origin:'中国', stage:'幼猫期 · 国产高肉', stageKey:'domestic', protein:'38%', fat:'17%', body:'#f5ead0', accent:'#4a9b7a', fit:'国产高肉路线支持者，幼猫期', pros:['38%蛋白适中','鲜肉含量高','无谷物','性价比好'], cons:['品牌知名度低','渠道有限','适口性个体差异'] },
+    { id:19, name:'凯锐思 全价成猫粮', en:'KERUISI', brand:'凯锐思 KERUISI', origin:'中国', stage:'成猫期 · 国民口粮', stageKey:'domestic', protein:'30%', fat:'14%', body:'#f5ead0', accent:'#5a8b7a', fit:'预算有限的养猫家庭，成猫日常', pros:['价格极亲民','渠道广泛易购','适口性尚可','品控基本稳定'], cons:['蛋白质30%偏低','含谷物','原料透明度一般'] },
+    { id:20, name:'麦富迪 营养均衡成猫粮', en:'Myfoodie', brand:'麦富迪 Myfoodie', origin:'中国（乖宝宠物）', stage:'全阶段 · 国民均衡', stageKey:'domestic', protein:'32%', fat:'14%', body:'#f5ead0', accent:'#3a7b8a', fit:'追求均衡性价比的国民用户', pros:['大厂出品(乖宝)','品类丰富','价格亲民','渠道广泛'], cons:['蛋白质32%偏低','含谷物','适口性波动'] }
   ];
 
-  // ═══ 营养知识卡片 ═══
+  // ═══ 知识卡片 ═══
   const KNOWLEDGE = [
-    { icon: '🧬', title: '蛋白质', desc: '布偶猫需要32%以上粗蛋白。动物蛋白优于植物蛋白，鲜肉>肉粉>谷物蛋白。', range: '32%-47%', color: '#e53935' },
-    { icon: '🐟', title: 'Omega-3', desc: '深海鱼油中的EPA/DHA是毛发亮泽的关键。布偶猫每日需摄入0.5-2g/kg。', range: '0.5-2.8%', color: '#1e88e5' },
-    { icon: '🌾', title: '无谷物', desc: '布偶猫肠胃敏感，避免玉米、小麦、大豆等易致敏谷物。选择豌豆、红薯等低碳水替代。', range: '0% 谷物', color: '#43a047' },
-    { icon: '🦠', title: '益生菌', desc: '益生元(FOS)和益生菌(枯草芽孢杆菌)调节肠道菌群，改善布偶猫常见的软便问题。', range: '添加量0.3-0.5%', color: '#8e24aa' },
-    { icon: '💧', title: '水分', desc: '干粮水分通常8-10%，需额外提供饮水。建议搭配湿粮或使用流动饮水器。', range: '8-12%', color: '#039be5' },
-    { icon: '⚖️', title: '脂肪', desc: '布偶猫易胖，脂肪应控制在14-18%。搭配L-肉碱和高纤维有助于体重管理。', range: '14-18%', color: '#fb8c00' },
-    { icon: '🦴', title: '牛磺酸', desc: '必需氨基酸，缺乏会导致心脏病和失明。猫粮中应含0.1%以上。', range: '≥0.15%', color: '#3949ab' },
-    { icon: '🔄', title: '换粮过渡', desc: '布偶猫肠胃需要7-14天过渡期。新旧粮比例从25:75逐步调整到100:0。', range: '7-14天', color: '#00897b' }
+    { icon:'🧬', title:'粗蛋白质', desc:'布偶猫需32%以上。动物蛋白优于植物蛋白，鲜肉>肉粉>谷物蛋白。幼猫需更高。', range:'32%-45%', color:'#e53935' },
+    { icon:'🐟', title:'Omega脂肪酸', desc:'深海鱼油EPA/DHA是毛发亮泽关键。布偶猫长毛需额外补充Omega-3。', range:'0.5-2.8%', color:'#1e88e5' },
+    { icon:'🌾', title:'无谷物', desc:'布偶猫肠胃敏感，避免玉米小麦大豆。选择豌豆红薯等低碳水替代。', range:'0% 谷物', color:'#43a047' },
+    { icon:'🦠', title:'益生菌', desc:'益生元FOS和益生菌调节肠道菌群，改善布偶猫常见软便。', range:'添加0.3-0.5%', color:'#8e24aa' },
+    { icon:'⚖️', title:'脂肪控制', desc:'布偶猫易胖，成猫脂肪14-18%。绝育后建议12-14%，搭配运动。', range:'14-18%', color:'#fb8c00' },
+    { icon:'🔄', title:'换粮过渡', desc:'布偶猫肠胃需7-14天过渡。新旧比例25:75→50:50→75:25→100。', range:'7-14天', color:'#00897b' },
+    { icon:'💧', title:'水分补充', desc:'干粮水分8-10%。布偶猫易尿路问题，建议搭配湿粮或流动饮水器。', range:'每日50ml/kg', color:'#039be5' },
+    { icon:'🦴', title:'牛磺酸', desc:'必需氨基酸，缺乏致心脏病和失明。猫粮应含0.1%以上。', range:'≥0.15%', color:'#3949ab' }
   ];
 
-  // ═══ 布偶猫品种特点 ═══
-  const BREED_FACTS = [
-    { label: '体重', value: '4.5-9kg', icon: '⚖️' },
-    { label: '寿命', value: '12-17年', icon: '🕐' },
-    { label: '毛发', value: '中长毛·丝绒感', icon: '✨' },
-    { label: '性格', value: '温顺·粘人·聪明', icon: '💝' },
-    { label: '肠胃', value: '敏感·易软便', icon: '⚠️' },
-    { label: '体型', value: '大型·肌肉发达', icon: '🐱' }
+  // ═══ 展架布局 ═══
+  // 5层 × 4列 = 20罐
+  // 第1层(顶) 幼猫 4款, 第2层 成猫 4款, 第3层 功能型 4款, 第4层 老年2+冻干2, 第5层(底) 国货4
+  const SHELF_LAYOUT = [
+    { stageKey: 'kitten',   label: '幼猫期',   color: STAGE_META.kitten.color },
+    { stageKey: 'adult',    label: '成猫期',   color: STAGE_META.adult.color },
+    { stageKey: 'special',  label: '功能型',   color: STAGE_META.special.color },
+    { stageKey: 'mixed_4',  label: '老年 · 冻干', color: '#b07060' }, // 混合层
+    { stageKey: 'domestic', label: '国货精选', color: STAGE_META.domestic.color }
   ];
 
   // ═══ 初始化 ═══
-  const grid = document.getElementById('exhibitGrid');
-  const detailModal = document.getElementById('detailModal');
-  const detailBody = document.getElementById('detailBody');
-  const searchInput = document.getElementById('searchInput');
-  const filterBtns = document.querySelectorAll('.filter-btn');
+  const shelfContainer = document.getElementById('shelfContainer');
+  const detailPanel = document.getElementById('detailPanel');
+  const filterBar = document.getElementById('filterBar');
   const knowledgeGrid = document.getElementById('knowledgeGrid');
-  const breedFacts = document.getElementById('breedFacts');
+  const compareBody = document.getElementById('compareBody');
 
   let currentFilter = 'all';
-  let currentSearch = '';
+  let selectedFoodId = null;
 
-  // 渲染展品卡片
-  function renderExhibits() {
-    const filtered = EXHIBITS.filter(ex => {
-      const matchFilter = currentFilter === 'all' || ex.tags.includes(currentFilter);
-      const matchSearch = !currentSearch ||
-        ex.name.toLowerCase().includes(currentSearch) ||
-        ex.brand.toLowerCase().includes(currentSearch) ||
-        ex.origin.toLowerCase().includes(currentSearch);
-      return matchFilter && matchSearch;
-    });
+  // 渲染展架
+  function renderShelves() {
+    let foodIndex = 0;
+    const shelvesHtml = SHELF_LAYOUT.map((shelf, shelfIdx) => {
+      const foods = FOODS.filter(f => {
+        if (shelf.stageKey === 'mixed_4') {
+          // 第4层：老年2款(id 13,14) + 冻干2款(id 15,16)
+          return f.stageKey === 'senior' || f.stageKey === 'raw';
+        }
+        return f.stageKey === shelf.stageKey;
+      });
 
-    if (filtered.length === 0) {
-      grid.innerHTML = '<div class="empty">暂无匹配展品，试试其他关键词？</div>';
-      return;
-    }
+      const cansHtml = foods.map((food, colIdx) => {
+        foodIndex++;
+        return `
+          <div class="can-wrapper" data-food-id="${food.id}" style="--delay:${(shelfIdx * 4 + colIdx) * 0.08}s">
+            <div class="can-3d" style="--body:${food.body}; --accent:${food.accent}">
+              <div class="can-top"></div>
+              <div class="can-body">
+                <div class="can-label">
+                  <div class="can-label-brand">${food.brand.split(' ')[0]}</div>
+                  <div class="can-label-name">${food.name.split(' ')[1] || food.name.split(' ')[0]}</div>
+                  <div class="can-label-stage" style="color:${food.accent}">${STAGE_META[food.stageKey].name}</div>
+                </div>
+                <div class="can-band" style="background:${food.accent}"></div>
+              </div>
+              <div class="can-bottom"></div>
+              <div class="can-glow" style="--g:${food.accent}"></div>
+            </div>
+            <div class="can-tag">${food.name}</div>
+          </div>
+        `;
+      }).join('');
 
-    grid.innerHTML = filtered.map((ex, i) => `
-      <article class="exhibit-card" style="--accent:${ex.color}; --delay:${i * 0.06}s" data-id="${ex.id}">
-        <div class="card-glow"></div>
-        <div class="card-header">
-          <span class="card-icon">${ex.icon}</span>
-          <span class="card-rating">${'★'.repeat(Math.round(ex.rating / 2))}</span>
+      return `
+        <div class="shelf-row" style="--shelf-color:${shelf.color}" data-stage="${shelf.stageKey}">
+          <div class="shelf-label">
+            <span class="shelf-dot" style="background:${shelf.color}"></span>
+            <span class="shelf-name">${shelf.label}</span>
+          </div>
+          <div class="shelf-board">
+            <div class="cans-row">${cansHtml}</div>
+          </div>
         </div>
-        <h3 class="card-name">${ex.name}</h3>
-        <p class="card-brand">${ex.brand} · ${ex.origin}</p>
-        <div class="card-stats">
-          <span class="stat"><span class="stat-label">蛋白</span><span class="stat-val">${ex.protein}</span></span>
-          <span class="stat"><span class="stat-label">脂肪</span><span class="stat-val">${ex.fat}</span></span>
-          <span class="stat"><span class="stat-label">评分</span><span class="stat-val highlight">${ex.rating}</span></span>
-        </div>
-        <div class="card-tags">
-          ${ex.tags.map(t => `<span class="tag">${t}</span>`).join('')}
-        </div>
-        <div class="card-price">${ex.price}</div>
-        <button class="card-detail-btn">查看详情 →</button>
-      </article>
-    `).join('');
+      `;
+    }).join('');
 
-    // 绑定点击事件
-    grid.querySelectorAll('.exhibit-card').forEach(card => {
-      card.addEventListener('click', () => {
-        const id = card.dataset.id;
-        const ex = EXHIBITS.find(e => e.id === id);
-        if (ex) showDetail(ex);
+    shelfContainer.innerHTML = shelvesHtml;
+
+    // 绑定点击
+    document.querySelectorAll('.can-wrapper').forEach(w => {
+      w.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const id = parseInt(w.dataset.foodId);
+        const food = FOODS.find(f => f.id === id);
+        if (food) showDetail(food);
       });
     });
   }
 
-  // 渲染详情弹窗
-  function showDetail(ex) {
-    detailBody.innerHTML = `
-      <div class="detail-header" style="--accent:${ex.color}">
-        <span class="detail-icon">${ex.icon}</span>
-        <div>
-          <h2>${ex.name}</h2>
-          <p>${ex.brand} · ${ex.origin} · ${ex.type}</p>
-        </div>
-        <button class="detail-close" onclick="document.getElementById('detailModal').classList.remove('active')">×</button>
-      </div>
-      <p class="detail-desc">${ex.desc}</p>
+  // 渲染筛选条
+  function renderFilters() {
+    const filters = [
+      { key: 'all', label: '全部', color: '#d4a574', icon: '🎯' },
+      { key: 'kitten', label: '幼猫', color: STAGE_META.kitten.color, icon: '🐱' },
+      { key: 'adult', label: '成猫', color: STAGE_META.adult.color, icon: '🐈' },
+      { key: 'special', label: '功能型', color: STAGE_META.special.color, icon: '💊' },
+      { key: 'senior', label: '老年', color: STAGE_META.senior.color, icon: '🐾' },
+      { key: 'raw', label: '冻干高肉', color: STAGE_META.raw.color, icon: '🥩' },
+      { key: 'domestic', label: '国货精选', color: STAGE_META.domestic.color, icon: '⭐' }
+    ];
 
-      <div class="detail-section">
-        <h4>📊 营养成分</h4>
-        <div class="nutrition-bars">
-          ${Object.entries(ex.nutrition).map(([key, val]) => {
-            const labels = { protein: '粗蛋白', fat: '粗脂肪', fiber: '粗纤维', moisture: '水分', omega3: 'Omega-3', taurine: '牛磺酸' };
-            const maxVals = { protein: 50, fat: 25, fiber: 8, moisture: 15, omega3: 3, taurine: 0.3 };
-            const pct = Math.min(100, (val / maxVals[key]) * 100);
-            return `
-              <div class="nut-bar">
-                <span class="nut-label">${labels[key] || key}</span>
-                <div class="nut-track"><div class="nut-fill" style="width:${pct}%;background:${ex.color}"></div></div>
-                <span class="nut-val">${val}${key === 'taurine' ? '%' : '%'}</span>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
+    filterBar.innerHTML = filters.map(f => `
+      <button class="filter-pill ${f.key === currentFilter ? 'active' : ''}"
+              data-filter="${f.key}"
+              style="--pill:${f.color}">
+        <span class="pill-icon">${f.icon}</span>
+        <span>${f.label}</span>
+      </button>
+    `).join('');
 
-      <div class="detail-section">
-        <h4>🥩 主要原料</h4>
-        <div class="ingredient-list">
-          ${ex.ingredients.map(ing => `<span class="ingredient-chip">${ing}</span>`).join('')}
-        </div>
-      </div>
-
-      <div class="detail-grid">
-        <div class="detail-section">
-          <h4>✅ 优点</h4>
-          <ul class="pros-list">
-            ${ex.pros.map(p => `<li>${p}</li>`).join('')}
-          </ul>
-        </div>
-        <div class="detail-section">
-          <h4>⚠️ 注意</h4>
-          <ul class="cons-list">
-            ${ex.cons.map(c => `<li>${c}</li>`).join('')}
-          </ul>
-        </div>
-      </div>
-
-      <div class="detail-scene">
-        <span class="scene-icon">🎯</span>
-        <span>${ex.scene}</span>
-      </div>
-
-      <div class="detail-footer">
-        <span class="detail-price">${ex.price}</span>
-        <span class="detail-rating">综合评分 ${ex.rating} / 10</span>
-      </div>
-    `;
-    detailModal.classList.add('active');
+    filterBar.querySelectorAll('.filter-pill').forEach(btn => {
+      btn.addEventListener('click', () => {
+        filterBar.querySelectorAll('.filter-pill').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        applyFilter();
+      });
+    });
   }
 
-  // 渲染营养知识
+  // 应用筛选
+  function applyFilter() {
+    document.querySelectorAll('.can-wrapper').forEach(w => {
+      const id = parseInt(w.dataset.foodId);
+      const food = FOODS.find(f => f.id === id);
+      if (!food) return;
+      const match = currentFilter === 'all' || food.stageKey === currentFilter;
+      w.classList.toggle('dimmed', !match);
+      w.classList.toggle('clickable', match);
+    });
+
+    document.querySelectorAll('.shelf-row').forEach(row => {
+      const stage = row.dataset.stage;
+      if (currentFilter === 'all') {
+        row.classList.remove('dimmed');
+      } else {
+        let match = false;
+        if (stage === currentFilter) match = true;
+        if (stage === 'mixed_4' && (currentFilter === 'senior' || currentFilter === 'raw')) match = true;
+        row.classList.toggle('dimmed', !match);
+      }
+    });
+  }
+
+  // 显示详情
+  function showDetail(food) {
+    selectedFoodId = food.id;
+    const stage = STAGE_META[food.stageKey];
+
+    // 高亮选中罐
+    document.querySelectorAll('.can-wrapper').forEach(w => {
+      w.classList.toggle('selected', parseInt(w.dataset.foodId) === food.id);
+    });
+
+    detailPanel.innerHTML = `
+      <div class="detail-panel-inner" style="--accent:${food.accent}; --stage:${stage.color}">
+        <div class="detail-header">
+          <div class="detail-can-icon" style="background:${food.accent}">
+            <span>${stage.icon}</span>
+          </div>
+          <div class="detail-title-area">
+            <h2>${food.name}</h2>
+            <p>${food.brand} · ${food.origin}</p>
+            <div class="detail-stage-tag" style="background:${stage.color}">${food.stage}</div>
+          </div>
+          <button class="detail-close" onclick="closeDetail()">×</button>
+        </div>
+
+        <div class="detail-nutrition">
+          <div class="nut-card">
+            <span class="nut-label">粗蛋白</span>
+            <span class="nut-value" style="color:${food.accent}">${food.protein}</span>
+          </div>
+          <div class="nut-card">
+            <span class="nut-label">粗脂肪</span>
+            <span class="nut-value" style="color:${food.accent}">${food.fat}</span>
+          </div>
+          <div class="nut-card">
+            <span class="nut-label">阶段</span>
+            <span class="nut-value" style="color:${food.accent}">${stage.name}</span>
+          </div>
+        </div>
+
+        <div class="detail-fit">
+          <span class="fit-icon">🎯</span>
+          <span>${food.fit}</span>
+        </div>
+
+        <div class="detail-pros-cons">
+          <div class="detail-pros">
+            <h4>✅ 优点</h4>
+            <ul>${food.pros.map(p => `<li>${p}</li>`).join('')}</ul>
+          </div>
+          <div class="detail-cons">
+            <h4>⚠️ 注意</h4>
+            <ul>${food.cons.map(c => `<li>${c}</li>`).join('')}</ul>
+          </div>
+        </div>
+      </div>
+    `;
+
+    detailPanel.classList.add('active');
+  }
+
+  // 关闭详情
+  window.closeDetail = function() {
+    detailPanel.classList.remove('active');
+    document.querySelectorAll('.can-wrapper').forEach(w => w.classList.remove('selected'));
+    selectedFoodId = null;
+  };
+
+  // 渲染知识卡片
   function renderKnowledge() {
     knowledgeGrid.innerHTML = KNOWLEDGE.map(k => `
       <div class="knowledge-card" style="--k-color:${k.color}">
@@ -410,51 +276,33 @@
     `).join('');
   }
 
-  // 渲染品种特点
-  function renderBreedFacts() {
-    breedFacts.innerHTML = BREED_FACTS.map(f => `
-      <div class="breed-fact">
-        <span class="bf-icon">${f.icon}</span>
-        <span class="bf-label">${f.label}</span>
-        <span class="bf-value">${f.value}</span>
-      </div>
+  // 渲染对比表
+  function renderCompare() {
+    compareBody.innerHTML = FOODS.map(f => `
+      <tr>
+        <td>${f.name}</td>
+        <td>${f.origin}</td>
+        <td class="best">${f.protein}</td>
+        <td>${f.fat}</td>
+        <td><span class="stage-badge" style="background:${STAGE_META[f.stageKey].color}">${STAGE_META[f.stageKey].name}</span></td>
+      </tr>
     `).join('');
   }
 
-  // 搜索
-  searchInput.addEventListener('input', (e) => {
-    currentSearch = e.target.value.toLowerCase().trim();
-    renderExhibits();
-  });
-
-  // 筛选
-  filterBtns.forEach(btn => {
-    btn.addEventListener('click', () => {
-      filterBtns.forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      currentFilter = btn.dataset.filter;
-      renderExhibits();
-    });
-  });
-
-  // 关闭弹窗
-  detailModal.addEventListener('click', (e) => {
-    if (e.target === detailModal) {
-      detailModal.classList.remove('active');
-    }
-  });
-
   // ESC 关闭
   document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') detailModal.classList.remove('active');
+    if (e.key === 'Escape') closeDetail();
+  });
+
+  // 点击背景关闭
+  detailPanel.addEventListener('click', (e) => {
+    if (e.target === detailPanel) closeDetail();
   });
 
   // 滚动动画
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
+      if (entry.isIntersecting) entry.target.classList.add('visible');
     });
   }, { threshold: 0.1 });
 
@@ -467,15 +315,16 @@
     });
   });
 
-  // 初始渲染
-  renderExhibits();
+  // 初始化
+  renderShelves();
+  renderFilters();
   renderKnowledge();
-  renderBreedFacts();
+  renderCompare();
+  applyFilter();
 
-  // 观察所有卡片
   setTimeout(() => {
-    document.querySelectorAll('.exhibit-card, .knowledge-card').forEach(el => observer.observe(el));
+    document.querySelectorAll('.can-wrapper, .knowledge-card, .shelf-row').forEach(el => observer.observe(el));
   }, 100);
 
-  console.log('🐱 布偶猫猫粮展览馆 已加载完成');
+  console.log('🐱 布偶猫猫粮展览馆 v2 已加载 · 20款猫粮 · 5层展架');
 })();
