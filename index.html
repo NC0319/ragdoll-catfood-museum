@@ -5,189 +5,350 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>布偶猫猫粮3D展览馆 · Ragdoll Cat Food 3D Museum</title>
+<title>布偶猫猫粮 3D 展览馆</title>
 <style>
+
 * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
 html, body { width:100%; height:100%; overflow:hidden; background:#3d2a1c; font-family:-apple-system,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif; }
-canvas { display:block; touch-action: none; }
+canvas { display:block; touch-action: none; position:fixed; top:0; left:0; z-index:2; }
 
-#loading { position:fixed; inset:0; background:radial-gradient(ellipse at center,#5a3a28 0%,#3d2a1c 80%); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:1000; color:#f0d9b0; transition: opacity .6s; }
+/* ═══ Blob 装饰层（参考图1）═══ */
+.blob-layer { position:fixed; inset:0; z-index:1; overflow:hidden; pointer-events:none; }
+.blob {
+  position:absolute;
+  filter: blur(60px);
+  opacity: 0.55;
+  animation: blobFloat 18s ease-in-out infinite;
+}
+.blob-1 { top:-12%; left:-10%; width:55vw; height:55vw; background:radial-gradient(circle, #e9c46a 0%, #d4a574 60%, transparent 100%); border-radius: 60% 40% 50% 50% / 50% 60% 40% 50%; animation-delay: 0s; }
+.blob-2 { top:35%; right:-15%; width:50vw; height:50vw; background:radial-gradient(circle, #c4915c 0%, #a6703e 50%, transparent 100%); border-radius: 50% 60% 40% 50% / 60% 50% 50% 40%; opacity: 0.45; animation-delay: -6s; }
+.blob-3 { bottom:-15%; left:25%; width:60vw; height:60vw; background:radial-gradient(circle, #d4756b 0%, #c98b5b 50%, transparent 100%); border-radius: 40% 50% 60% 50% / 50% 40% 60% 50%; opacity: 0.4; animation-delay: -12s; }
+.blob-4 { top:10%; left:35%; width:30vw; height:30vw; background:radial-gradient(circle, #6f9bc9 0%, transparent 70%); border-radius: 50%; opacity: 0.3; animation-delay: -3s; }
+@keyframes blobFloat {
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  33% { transform: translate(40px, -30px) scale(1.08) rotate(8deg); }
+  66% { transform: translate(-30px, 40px) scale(0.95) rotate(-8deg); }
+}
+
+/* ═══ 加载动画 ═══ */
+#loading { position:fixed; inset:0; background:linear-gradient(135deg, #5a3a28 0%, #3d2a1c 100%); display:flex; flex-direction:column; align-items:center; justify-content:center; z-index:9999; color:#f0d9b0; transition: opacity .6s; }
 #loading.hide { opacity:0; pointer-events:none; }
 #loading .cat { font-size:64px; animation: bounce 1.4s infinite; }
 #loading .msg { margin-top:20px; font-size:16px; letter-spacing:2px; text-align:center; padding:0 20px; }
 #loading .err { display:none; margin-top:16px; padding:12px 24px; background:#c0392b; color:#fff; border-radius:8px; font-size:14px; max-width:80%; text-align:center; }
 @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-15px)} }
 
-#ui { position:fixed; inset:0; pointer-events:none; z-index:10; }
-#ui > * { pointer-events:auto; }
+/* ═══ 顶部导航（参考图3）═══ */
+.top-nav {
+  position:fixed; top:0; left:0; right:0;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 28px; z-index:100;
+}
+.logo-pill {
+  background: linear-gradient(135deg, #6f9bc9 0%, #8b6f9b 100%);
+  color:white;
+  border-radius:50px;
+  padding:8px 18px 8px 12px;
+  display:flex; align-items:center; gap:10px;
+  font-weight:700; font-size:15px;
+  box-shadow: 0 8px 24px rgba(111,155,201,0.35);
+}
+.logo-pill .emoji {
+  width:32px; height:32px;
+  background:rgba(255,255,255,0.2);
+  border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:18px;
+}
 
-#title { position:absolute; top:20px; left:20px; right:20px; text-align:center; color:#f0d9b0; }
-#title h1 { font-size:24px; font-weight:300; letter-spacing:6px; color:#ffd9a0; text-shadow: 0 2px 12px rgba(255,200,150,0.5); }
-#title p { font-size:11px; letter-spacing:4px; color:#d4a574; margin-top:4px; }
+.nav-tabs {
+  display:flex; gap:6px;
+  background: rgba(255, 235, 200, 0.15);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border:1px solid rgba(212,168,116,0.3);
+  border-radius:50px;
+  padding:6px;
+}
+.nav-tabs .tab {
+  padding:8px 18px;
+  border-radius:24px;
+  color:#ffd9a0;
+  font-size:13px;
+  cursor:pointer;
+  user-select:none;
+  transition: all .25s;
+  letter-spacing:1px;
+}
+.nav-tabs .tab:hover { color:#fff; }
+.nav-tabs .tab.active {
+  background: linear-gradient(135deg, #d4a574 0%, #e6b878 100%);
+  color:#2a1a10;
+  font-weight:600;
+  box-shadow: 0 4px 12px rgba(212,168,116,0.4);
+}
 
-#filters { position:absolute; bottom:30px; left:50%; transform:translateX(-50%); display:flex; gap:10px; flex-wrap:wrap; justify-content:center; max-width:90%; }
-.fp { padding:8px 16px; border-radius:20px; background:rgba(255,235,200,0.15); color:#f0d9b0; border:1px solid rgba(212,168,116,0.4); cursor:pointer; font-size:13px; backdrop-filter: blur(8px); transition: all .25s; letter-spacing:1px; -webkit-tap-highlight-color: transparent; user-select: none; }
+.nav-tools {
+  display:flex; gap:8px;
+}
+.nav-tools button {
+  width:40px; height:40px;
+  border-radius:50%;
+  background:rgba(255,235,200,0.15);
+  border:1px solid rgba(212,168,116,0.3);
+  color:#ffd9a0;
+  font-size:16px;
+  cursor:pointer;
+  backdrop-filter:blur(12px);
+  transition: all .25s;
+}
+.nav-tools button:hover {
+  background:rgba(255,235,200,0.25);
+  transform: translateY(-1px);
+}
+
+/* ═══ 底部筛选 ═══ */
+.bottom-bar {
+  position:fixed; bottom:24px; left:50%;
+  transform: translateX(-50%);
+  z-index:100;
+  display:flex; flex-direction:column; gap:10px; align-items:center;
+}
+#filters { display:flex; gap:8px; flex-wrap:wrap; justify-content:center; max-width:90vw; }
+.fp {
+  padding:8px 16px; border-radius:24px;
+  background: rgba(255,235,200,0.15);
+  color:#ffd9a0; border:1px solid rgba(212,168,116,0.4);
+  cursor:pointer; font-size:13px;
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  transition: all .25s; letter-spacing:1px;
+  user-select: none;
+}
 .fp:hover { background:rgba(255,235,200,0.25); border-color:#ffd9a0; }
-.fp.active { background:#d4a574; color:#2a1a10; font-weight:600; }
+.fp.active {
+  background: linear-gradient(135deg, #d4a574 0%, #e6b878 100%);
+  color:#2a1a10; font-weight:600;
+  border-color: transparent;
+  box-shadow: 0 4px 16px rgba(212,168,116,0.4);
+}
 .fp .dot { display:inline-block; width:8px; height:8px; border-radius:50%; margin-right:6px; vertical-align:middle; }
 
-#hint { position:absolute; top:80px; left:50%; transform:translateX(-50%); color:#d4a574; font-size:12px; letter-spacing:1px; }
+.bottom-stats {
+  font-size:11px; color:#d4a574;
+  letter-spacing:2px;
+  background: rgba(255,235,200,0.1);
+  padding:4px 12px;
+  border-radius:20px;
+  backdrop-filter:blur(12px);
+}
 
-#back-btn { position:absolute; top:20px; left:20px; padding:6px 14px; background:rgba(255,235,200,0.15); color:#ffd9a0; border:1px solid rgba(212,168,116,0.4); border-radius:16px; cursor:pointer; font-size:13px; display:none; backdrop-filter: blur(8px); user-select: none; }
+/* ═══ 返回按钮 ═══ */
+#back-btn {
+  position:fixed; top:90px; left:28px;
+  padding:8px 16px; border-radius:24px;
+  background:rgba(255,235,200,0.15);
+  color:#ffd9a0; border:1px solid rgba(212,168,116,0.4);
+  font-size:13px; cursor:pointer;
+  backdrop-filter:blur(12px); display:none; z-index:100;
+  transition: all .25s;
+}
 #back-btn.show { display:block; }
+#back-btn:hover { background:rgba(255,235,200,0.25); }
 
-#detail { position:fixed; top:0; right:-440px; width:420px; max-width:90vw; height:100vh; background:linear-gradient(135deg, rgba(60,40,28,0.95), rgba(80,50,30,0.95)); backdrop-filter: blur(16px); border-left:1px solid rgba(212,168,116,0.3); padding:30px; color:#e8d9c0; z-index:100; transition: right .5s cubic-bezier(.4,0,.2,1); overflow-y:auto; -webkit-overflow-scrolling: touch; }
-#detail.show { right:0; box-shadow: -10px 0 40px rgba(0,0,0,0.5); }
-#detail-close { position:absolute; top:15px; right:15px; width:32px; height:32px; border-radius:50%; background:rgba(212,168,116,0.2); border:none; color:#ffd9a0; font-size:18px; cursor:pointer; }
-#detail-close:hover { background:rgba(212,168,116,0.4); }
-#detail h2 { color:#ffd9a0; font-size:22px; margin-bottom:4px; }
-#detail .brand { color:#d4a574; font-size:13px; margin-bottom:20px; }
-#detail .stage { display:inline-block; padding:4px 12px; border-radius:12px; font-size:12px; margin-bottom:16px; }
-#detail .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:16px 0; }
-#detail .stat { background:rgba(212,168,116,0.12); padding:10px; border-radius:8px; border:1px solid rgba(212,168,116,0.2); }
-#detail .stat .lbl { font-size:11px; color:#b88a5a; }
-#detail .stat .val { font-size:16px; color:#ffd9a0; margin-top:4px; }
-#detail .fit { background:rgba(212,168,116,0.1); padding:12px; border-radius:8px; font-size:13px; line-height:1.6; margin:14px 0; border-left:3px solid #d4a574; }
-#detail .pros, #detail .cons { margin:14px 0; }
-#detail .pros h4 { font-size:13px; margin-bottom:8px; color:#9ad29a; }
-#detail .cons h4 { font-size:13px; margin-bottom:8px; color:#d4a574; }
-#detail ul { list-style:none; }
-#detail ul li { padding:4px 0; padding-left:18px; position:relative; font-size:13px; }
-#detail ul li::before { content:"·"; position:absolute; left:0; color:#d4a574; font-weight:bold; }
+/* ═══ 紫色详情卡片（参考图3）═══ */
+#detail {
+  position:fixed; top:0; right:-520px;
+  width:480px; max-width:92vw; height:100vh;
+  background: linear-gradient(180deg, #4a3a6b 0%, #6f5b8b 50%, #4a3a6b 100%);
+  border-radius:32px 0 0 32px;
+  padding:24px;
+  color:white;
+  z-index:200;
+  transition: right .55s cubic-bezier(.4,0,.2,1);
+  overflow-y:auto;
+  box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+  -webkit-overflow-scrolling: touch;
+}
+#detail.show { right:0; }
 
-#stage-labels { position:absolute; left:18px; top:50%; transform:translateY(-50%); display:flex; flex-direction:column; gap:8px; }
-.stage-label { padding:6px 10px; border-radius:8px; background:rgba(255,235,200,0.12); font-size:11px; color:#ffd9a0; letter-spacing:1px; backdrop-filter:blur(8px); border-left:3px solid #d4a574; user-select: none; }
+#detail-close {
+  position:absolute; top:18px; right:18px;
+  width:36px; height:36px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.15);
+  border:1px solid rgba(255,255,255,0.2);
+  color:white; font-size:18px;
+  cursor:pointer;
+  z-index:10;
+  transition: all .25s;
+}
+#detail-close:hover { background:rgba(255,255,255,0.3); transform:rotate(90deg); }
 
-#stats-badge { position:absolute; bottom:100px; right:20px; color:#b88a5a; font-size:11px; letter-spacing:1px; text-align:right; }
+.dc-hero {
+  border-radius:24px;
+  padding:30px 24px 24px;
+  margin-bottom:20px;
+  text-align:center;
+  position:relative;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+  min-height:240px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
+.dc-hero h2 {
+  font-size:22px; font-weight:700;
+  color:white;
+  margin-bottom:4px;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+.dc-360 {
+  position:absolute; top:14px; left:14px;
+  width:56px; height:56px; border-radius:50%;
+  background:rgba(255,255,255,0.25);
+  border:1px solid rgba(255,255,255,0.4);
+  color:white;
+  font-size:10px;
+  cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:2px;
+  letter-spacing:0;
+}
+.dc-360 span { font-size:22px; }
+.dc-stage-tag {
+  position:absolute; top:18px; right:18px;
+  background:rgba(255,255,255,0.25);
+  backdrop-filter:blur(12px);
+  padding:4px 12px;
+  border-radius:20px;
+  font-size:11px;
+  color:white;
+  letter-spacing:1px;
+}
+.dc-brand-mark {
+  position:absolute;
+  top:50%; left:50%;
+  transform: translate(-50%, -70%);
+  font-size:96px;
+  font-weight:900;
+  color:rgba(255,255,255,0.25);
+  letter-spacing:-4px;
+  font-family: Georgia, serif;
+  user-select:none;
+}
+.dc-price {
+  font-size:42px; font-weight:700;
+  color:white;
+  margin-top:8px;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.dc-add {
+  position:absolute; bottom:18px; right:18px;
+  width:56px; height:56px; border-radius:50%;
+  background: rgba(0,0,0,0.3);
+  border:1px solid rgba(255,255,255,0.4);
+  color:white;
+  font-size:28px; font-weight:300;
+  cursor:pointer;
+  transition: all .25s;
+}
+.dc-add:hover { background: rgba(0,0,0,0.5); transform: scale(1.08); }
 
-/* ═══ 响应式断点 ═══ */
-
-/* 大屏桌面（默认就是桌面布局，但显式声明） */
-@media (min-width: 1280px) {
-  #title h1 { font-size: 26px; letter-spacing: 8px; }
-  #stats-badge { font-size: 12px; }
+.dc-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:18px; }
+.dc-chip {
+  padding:6px 14px;
+  border-radius:16px;
+  background:rgba(255,255,255,0.12);
+  color:rgba(255,255,255,0.85);
+  font-size:11px;
+  letter-spacing:1px;
+  backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,0.15);
 }
 
-/* 平板（768-1024）*/
+.dc-section {
+  background:rgba(255,255,255,0.08);
+  padding:14px 16px;
+  border-radius:16px;
+  margin-bottom:16px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.dc-section h4 { font-size:13px; margin-bottom:6px; color:rgba(255,255,255,0.7); letter-spacing:1px; }
+.dc-section p { font-size:13px; line-height:1.7; color:rgba(255,255,255,0.95); }
+
+.dc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:16px; }
+.dc-card-dc {
+  background:rgba(255,255,255,0.08);
+  padding:14px 14px 12px;
+  border-radius:16px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.dc-card-dc h4 { font-size:13px; margin-bottom:8px; letter-spacing:1px; }
+.dc-card-dc:first-child h4 { color:#9ad29a; }
+.dc-card-dc:last-child h4 { color:#f0c97a; }
+.dc-card-dc ul { list-style:none; }
+.dc-card-dc ul li {
+  padding:3px 0; padding-left:14px;
+  position:relative; font-size:12px; line-height:1.5;
+  color:rgba(255,255,255,0.85);
+}
+.dc-card-dc ul li::before {
+  content:"•"; position:absolute; left:0; color:rgba(255,255,255,0.5); font-weight:bold;
+}
+
+/* 提示条 */
+.hint {
+  position:fixed; top:90px; left:50%; transform:translateX(-50%);
+  color:#d4a574; font-size:12px; letter-spacing:2px;
+  background:rgba(255,235,200,0.08);
+  padding:6px 16px; border-radius:20px;
+  backdrop-filter:blur(8px); z-index:50;
+}
+
+/* ═══ 响应式 ═══ */
 @media (max-width: 1024px) {
-  #title h1 { font-size: 20px; letter-spacing: 4px; }
-  #title p { font-size: 10px; }
-  #hint { font-size: 11px; top: 70px; }
-  #filters { bottom: 20px; gap: 8px; }
-  .fp { padding: 7px 14px; font-size: 12px; }
-  #stage-labels { left: 12px; }
-  .stage-label { font-size: 10px; padding: 5px 8px; }
-  #stats-badge { font-size: 10px; right: 12px; bottom: 90px; }
-  #detail { width: 380px; padding: 24px; }
+  .top-nav { padding:14px 18px; }
+  .nav-tabs .tab { padding:7px 14px; font-size:12px; }
+  .logo-pill { font-size:13px; padding:7px 14px 7px 10px; }
+  .logo-pill .emoji { width:28px; height:28px; font-size:16px; }
+  .hint { font-size:11px; }
 }
 
-/* 手机横屏（480-768）*/
 @media (max-width: 768px) {
-  #title { top: 12px; }
-  #title h1 { font-size: 16px; letter-spacing: 3px; }
-  #title p { font-size: 9px; letter-spacing: 2px; }
-  #hint { font-size: 10px; top: 56px; padding: 0 12px; max-width: 90vw; }
-  #back-btn { top: 12px; left: 12px; padding: 5px 12px; font-size: 12px; }
-  
-  /* 阶段标签改成顶部水平条 */
-  #stage-labels {
-    top: 88px;
-    left: 50%;
-    transform: translateX(-50%);
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: center;
-    max-width: 92vw;
-    gap: 6px;
-  }
-  .stage-label {
-    font-size: 10px;
-    padding: 4px 8px;
-  }
-  
-  #filters {
-    bottom: 12px;
-    gap: 6px;
-    max-width: 96vw;
-  }
-  .fp {
-    padding: 6px 11px;
-    font-size: 11px;
-    border-radius: 16px;
-  }
-  .fp .dot { width: 6px; height: 6px; margin-right: 4px; }
-  
-  #stats-badge {
-    font-size: 9px;
-    bottom: 70px;
-    right: 12px;
-  }
-  
-  /* 详情面板：手机端从底部拉起（70% 高度）*/
-  #detail {
-    width: 100vw;
-    max-width: 100vw;
-    height: 75vh;
-    top: auto;
-    bottom: -100%;
-    right: 0;
-    left: 0;
-    border-left: none;
-    border-top: 1px solid rgba(212,168,116,0.3);
-    border-radius: 20px 20px 0 0;
-    transition: bottom .5s cubic-bezier(.4,0,.2,1);
-    padding: 24px 20px;
-  }
-  #detail.show { bottom: 0; }
-  #detail-close {
-    top: 12px;
-    right: 16px;
-    width: 28px;
-    height: 28px;
-  }
-  #detail h2 { font-size: 18px; }
-  #detail .brand { font-size: 12px; margin-bottom: 12px; }
-  #detail .stats { gap: 8px; }
-  #detail .stat .val { font-size: 14px; }
-  #detail .fit { font-size: 12px; padding: 10px; }
-  #detail .pros h4, #detail .cons h4 { font-size: 12px; }
-  #detail ul li { font-size: 12px; }
+  .top-nav { padding:12px 14px; flex-wrap:wrap; gap:8px; }
+  .logo-pill { order:1; }
+  .nav-tabs { order:3; width:100%; justify-content:center; padding:4px; }
+  .nav-tabs .tab { padding:6px 12px; font-size:11px; flex:1; text-align:center; }
+  .nav-tools { order:2; }
+  .nav-tools button { width:36px; height:36px; font-size:14px; }
+  #back-btn { top:74px; left:14px; }
+  .hint { display:none; }
+  .bottom-bar { bottom:14px; }
+  .fp { padding:6px 12px; font-size:12px; }
+  .bottom-stats { font-size:10px; }
+
+  #detail { width:100vw; max-width:100vw; height:78vh; top:auto; bottom:-100%; right:0; left:0; border-radius:24px 24px 0 0; }
+  #detail.show { bottom:0; }
 }
 
-/* 小屏手机（<480）*/
 @media (max-width: 480px) {
-  #title h1 { font-size: 14px; letter-spacing: 2px; }
-  #title p { font-size: 8px; letter-spacing: 1.5px; }
-  #hint { font-size: 9px; top: 50px; }
-  #stage-labels { top: 78px; }
-  .stage-label { font-size: 9px; padding: 3px 6px; }
-  #filters { bottom: 10px; gap: 4px; }
-  .fp { padding: 5px 9px; font-size: 10px; }
-  #stats-badge { font-size: 8px; }
-  #detail { height: 80vh; padding: 20px 16px; }
-  #detail h2 { font-size: 16px; }
+  .top-nav { padding:10px 12px; }
+  .logo-pill { font-size:12px; padding:6px 12px 6px 8px; gap:8px; }
+  .logo-pill .emoji { width:24px; height:24px; font-size:14px; }
+  .nav-tools button { width:32px; height:32px; font-size:13px; }
+  #back-btn { top:64px; padding:6px 12px; font-size:12px; }
 }
 
-/* 安全区域（刘海/导航条） */
+@media (max-height: 500px) and (orientation: landscape) {
+  .top-nav { padding:8px 16px; }
+  .nav-tabs .tab { padding:5px 10px; font-size:11px; }
+  .hint { display:none; }
+}
+
 @supports (padding: max(0px)) {
-  #title { padding-top: max(8px, env(safe-area-inset-top)); }
-  #filters { padding-bottom: max(8px, env(safe-area-inset-bottom)); }
+  .top-nav { padding-top: max(14px, env(safe-area-inset-top)); }
+  .bottom-bar { padding-bottom: max(14px, env(safe-area-inset-bottom)); }
   #detail { padding-bottom: max(24px, env(safe-area-inset-bottom)); }
 }
-
-/* 横屏特殊处理 */
-@media (max-height: 500px) and (orientation: landscape) {
-  #title { top: 6px; }
-  #title h1 { font-size: 14px; }
-  #title p { display: none; }
-  #hint { display: none; }
-  #stage-labels { top: 36px; }
-  #filters { bottom: 6px; }
-  #detail { height: 92vh; }
-}
-
-/* 防止 body 在移动端滚动 */
-body.detail-open { overflow: hidden; touch-action: none; }
+body.detail-open { overflow:hidden; touch-action:none; }
 
 </style>
 </head>
@@ -199,20 +360,43 @@ body.detail-open { overflow: hidden; touch-action: none; }
   <div class="err" id="err-box"></div>
 </div>
 
-<canvas id="c"></canvas>
-
-<div id="ui">
-  <div id="title">
-    <h1>布偶猫猫粮3D展览馆</h1>
-    <p>RAGDOLL · CAT FOOD MUSEUM · 3D</p>
-  </div>
-  <div id="hint">拖拽环视 · 滚轮缩放 · 点击罐体查看详情</div>
-  <button id="back-btn">← 返回展馆</button>
-  <div id="stage-labels"></div>
-  <div id="filters"></div>
-  <div id="stats-badge">20 款猫粮 · 5 层展架 · 6 大阶段</div>
+<!-- Blob 装饰层 -->
+<div class="blob-layer">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+  <div class="blob blob-3"></div>
+  <div class="blob blob-4"></div>
 </div>
 
+<canvas id="c"></canvas>
+
+<!-- 顶部导航 -->
+<nav class="top-nav">
+  <div class="logo-pill">
+    <span class="emoji">🐱</span>
+    <span>布偶猫粮</span>
+  </div>
+  <div class="nav-tabs">
+    <div class="tab active">3D 展馆</div>
+    <div class="tab">卡片浏览</div>
+    <div class="tab">知识库</div>
+  </div>
+  <div class="nav-tools">
+    <button title="搜索">🔍</button>
+    <button title="设置">⚙️</button>
+  </div>
+</nav>
+
+<button id="back-btn">← 返回展馆</button>
+
+<div class="hint">拖拽环视 · 滚轮缩放 · 点击罐体查看详情</div>
+
+<div class="bottom-bar">
+  <div id="filters"></div>
+  <div class="bottom-stats">20 款猫粮 · 5 层展架 · 6 大阶段</div>
+</div>
+
+<!-- 紫色详情卡片 -->
 <div id="detail">
   <button id="detail-close">×</button>
   <div id="detail-content"></div>
@@ -238,7 +422,6 @@ if (!window.THREE || !window.OrbitControls) {
   return;
 }
 
-// 设备检测
 var IS_MOBILE = /Mobi|Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 var IS_TOUCH = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
 var THREE = window.THREE;
@@ -253,7 +436,7 @@ var STAGE_META = {
   domestic: { name: '国货精选', color: '#5bb0a8', hex: 0x5bb0a8 }
 };
 
-var FOODS = [{"id":1,"brand":"皇家ROYAL CANIN","name":"皇家幼猫 K36","origin":"法国 · 1974","stage":"幼猫期","stageKey":"kitten","protein":"32%","fat":"21%","accent":"#e9c46a","fit":"4-12月幼猫 · 离乳过渡 · 免疫力构建期","pros":["法国皇家经典幼猫系列","K36 颗粒适配幼猫小嘴","DHA 促进大脑发育"],"cons":["粗蛋白只有32%不算顶尖","含部分谷物","价位偏高"]},{"id":2,"brand":"渴望 Orijen","name":"渴望幼猫无谷","origin":"加拿大 · 1985","stage":"幼猫期","stageKey":"kitten","protein":"40%","fat":"20%","accent":"#c4915c","fit":"4-12月幼猫 · 高蛋白需求 · 离乳过渡","pros":["80% 鲜肉原料","40% 粗蛋白（行业顶尖）","无谷低敏配方"],"cons":["单价最高","适口性因猫而异","高蛋白需适应过渡"]},{"id":3,"brand":"诚实一口","name":"诚实一口 P40","origin":"中国 · 2019","stage":"幼猫期","stageKey":"kitten","protein":"40%","fat":"18%","accent":"#d4a574","fit":"4-12月幼猫 · 增肌长肉 · 国货高蛋白","pros":["40% 高蛋白与渴望持平","国产性价比之王","无谷无豆"],"cons":["国货新品牌历史短","进口原料供应链","售后评测褒贬不一"]},{"id":4,"brand":"卫仕 Nourse","name":"卫仕幼猫全价","origin":"中国 · 2004","stage":"幼猫期","stageKey":"kitten","protein":"38%","fat":"16%","accent":"#e8c79a","fit":"4-12月幼猫 · 营养均衡 · 平价易购","pros":["国货老牌 20 年","配方均衡价格亲民","线下宠物店易购"],"cons":["蛋白脂肪中等偏低","营销投入大于研发","原料透明度一般"]},{"id":5,"brand":"渴望 Orijen","name":"渴望六种鱼","origin":"加拿大 · 1985","stage":"成猫期","stageKey":"adult","protein":"38%","fat":"18%","accent":"#5b9aa0","fit":"成猫 · 美毛亮毛 · 美毛护肤","pros":["六种深海鱼配方","Omega-3 美毛冠军","鲜肉原料高"],"cons":["鱼味重便便腥","鱼敏感猫慎用","价格偏高"]},{"id":6,"brand":"爱肯拿 Acana","name":"爱肯拿海洋盛宴","origin":"加拿大 · 1977","stage":"成猫期","stageKey":"adult","protein":"37%","fat":"18%","accent":"#7fa0b8","fit":"成猫 · 美毛 · 海洋鱼配方","pros":["渴望同厂姐妹品牌","海洋鱼为主 美毛好","性价比高于渴望"],"cons":["鱼源单一品种有局限","豆类成分较多","包装分装便利"]},{"id":7,"brand":"冠能 Pro Plan","name":"冠能成猫鸡肉","origin":"美国 · 1894","stage":"成猫期","stageKey":"adult","protein":"36%","fat":"15%","accent":"#c97b5a","fit":"成猫 · 经典安全 · 雀巢旗下","pros":["百年品牌 配方稳定","线下医院常推荐","益生菌助消化"],"cons":["含谷物","蛋白脂肪中等","价格中等偏上"]},{"id":8,"brand":"网易严选","name":"网易严选全价","origin":"中国 · 2016","stage":"成猫期","stageKey":"adult","protein":"36%","fat":"15%","accent":"#c98b5b","fit":"成猫 · 平价 · 网易严选供应链","pros":["电商爆款 销量第一","配方跟随进口品牌","性价比高"],"cons":["贴牌代工争议","配方频繁迭代","评测褒贬不一"]},{"id":9,"brand":"希尔思 Hill's","name":"希尔思 c/d 泌尿","origin":"美国 · 1939","stage":"功能型","stageKey":"special","protein":"32%","fat":"15%","accent":"#6f9bc9","fit":"泌尿问题 · 处方粮 · 公猫导尿后","pros":["处方粮口碑金标准","宠物医院首选","有效控制镁离子"],"cons":["需医生指导使用","非日常长期主粮","适口性一般"]},{"id":10,"brand":"皇家ROYAL CANIN","name":"皇家泌尿 S/O","origin":"法国 · 1974","stage":"功能型","stageKey":"special","protein":"32%","fat":"14%","accent":"#7fae7a","fit":"泌尿问题 · 处方粮 · 镁控制","pros":["处方粮双雄之一","溶解鸟粪石","医院渠道稳定"],"cons":["需兽医处方","味道刺激 适口一般","配方相对老旧"]},{"id":11,"brand":"冠能 Pro Plan","name":"冠能绝育控重","origin":"美国 · 1894","stage":"功能型","stageKey":"special","protein":"40%","fat":"12%","accent":"#9b6f5e","fit":"绝育后猫 · 控体重 · 防肥胖","pros":["高蛋白低脂肪","L-肉碱助燃脂","绝育猫专用配方"],"cons":["需配套控制喂食量","适口性一般","进口价偏高"]},{"id":12,"brand":"皇家ROYAL CANIN","name":"皇家长毛化毛","origin":"法国 · 1974","stage":"功能型","stageKey":"special","protein":"32%","fat":"15%","accent":"#b88a5a","fit":"长毛猫 · 化毛 · 布偶/缅因/波斯","pros":["专门化毛配方","高纤维促排毛球","适配长毛品种"],"cons":["长期吃会营养单一","化毛功能有限","需配合化毛膏"]},{"id":13,"brand":"希尔思 Hill's","name":"希尔思老年 7+","origin":"美国 · 1939","stage":"老年期","stageKey":"senior","protein":"30%","fat":"14%","accent":"#a6703e","fit":"7 岁以上 · 关节保健 · 老年呵护","pros":["老年专属配方","软骨素 + EPA 护关节","抗氧化延缓衰老"],"cons":["蛋白偏低","适口性因猫而异","价格中等"]},{"id":14,"brand":"渴望 Orijen","name":"渴望 Senior 老年","origin":"加拿大 · 1985","stage":"老年期","stageKey":"senior","protein":"38%","fat":"15%","accent":"#8b6f5e","fit":"7 岁以上 · 高蛋白护瘦体重","pros":["保留高蛋白适应老年肌肉","关节营养配方","原料依旧顶级"],"cons":["价格昂贵","高蛋白可能肾脏负担","适口性差异"]},{"id":15,"brand":"巅峰 ZIWI","name":"巅峰风干牛肉","origin":"新西兰 · 2002","stage":"冻干高肉","stageKey":"raw","protein":"45%","fat":"35%","accent":"#d4756b","fit":"高蛋白 · 冻干 · 增肌美毛","pros":["96% 鲜肉原料","风干工艺保留营养","全球冻干粮标杆"],"cons":["价格最贵","脂肪偏高需控量","假冒伪略多"]},{"id":16,"brand":"K9 Natural","name":"K9 主食冻干","origin":"新西兰 · 2006","stage":"冻干高肉","stageKey":"raw","protein":"48%","fat":"32%","accent":"#c4756b","fit":"高蛋白 · 冻干 · 顶级生食替代","pros":["98% 鲜肉含量最高","主食级冻干可单独喂","低温风干工艺"],"cons":["价格极高","货源多为代购","部分猫不吃"]},{"id":17,"brand":"弗列加特 Fregatti","name":"弗列加特鲜肉粮","origin":"中国 · 2014","stage":"国货精选","stageKey":"domestic","protein":"40%","fat":"18%","accent":"#5bb0a8","fit":"成猫 · 高蛋白 · 国货鲜肉代表","pros":["鲜肉注浆工艺领先","原料供应链透明","国货高端代表"],"cons":["品牌历史短","价格已逼近进口","评测口碑两极"]},{"id":18,"brand":"蓝氏 Legend","name":"蓝氏全价","origin":"中国 · 2003","stage":"国货精选","stageKey":"domestic","protein":"38%","fat":"16%","accent":"#4a90a4","fit":"成猫 · 国货 · 性价比之选","pros":["二十年国货品牌","配方稳定价格亲民","线下渠道广"],"cons":["原料透明度一般","营销投入大"]},{"id":19,"brand":"凯锐思 Kairishi","name":"凯锐思主食","origin":"中国 · 2015","stage":"国货精选","stageKey":"domestic","protein":"36%","fat":"14%","accent":"#6ba8a0","fit":"成猫 · 平价国货 · 大众入门","pros":["价格最便宜品牌之一","入门级国货首选","线下店覆盖广"],"cons":["配方中规中矩","蛋白脂肪偏低","品牌溢价低"]},{"id":20,"brand":"麦富迪 Myfoodie","name":"麦富迪营养森林","origin":"中国 · 2012","stage":"国货精选","stageKey":"domestic","protein":"34%","fat":"14%","accent":"#7fb89a","fit":"成猫 · 平价国货 · 性价比","pros":["上市公司系做国货","配方迭代快","渠道覆盖最广"],"cons":["配方频繁改动","原料透明度一般","营销大于研发"]}];
+var FOODS = [{"id":1,"brand":"皇家ROYAL CANIN","name":"皇家幼猫 K36","origin":"法国 · 1974","stage":"幼猫期","stageKey":"kitten","protein":"32%","fat":"21%","accent":"#e9c46a","fit":"4-12月幼猫 · 离乳过渡 · 免疫力构建期","pros":["法国皇家经典幼猫系列","K36 颗粒适配幼猫小嘴","DHA 促进大脑发育"],"cons":["粗蛋白只有32%不算顶尖","含部分谷物","价位偏高"],"price":"¥398"},{"id":2,"brand":"渴望 Orijen","name":"渴望幼猫无谷","origin":"加拿大 · 1985","stage":"幼猫期","stageKey":"kitten","protein":"40%","fat":"20%","accent":"#c4915c","fit":"4-12月幼猫 · 高蛋白需求 · 离乳过渡","pros":["80% 鲜肉原料","40% 粗蛋白（行业顶尖）","无谷低敏配方"],"cons":["单价最高","适口性因猫而异","高蛋白需适应过渡"],"price":"¥680"},{"id":3,"brand":"诚实一口","name":"诚实一口 P40","origin":"中国 · 2019","stage":"幼猫期","stageKey":"kitten","protein":"40%","fat":"18%","accent":"#d4a574","fit":"4-12月幼猫 · 增肌长肉 · 国货高蛋白","pros":["40% 高蛋白与渴望持平","国产性价比之王","无谷无豆"],"cons":["国货新品牌历史短","进口原料供应链","售后评测褒贬不一"],"price":"¥368"},{"id":4,"brand":"卫仕 Nourse","name":"卫仕幼猫全价","origin":"中国 · 2004","stage":"幼猫期","stageKey":"kitten","protein":"38%","fat":"16%","accent":"#e8c79a","fit":"4-12月幼猫 · 营养均衡 · 平价易购","pros":["国货老牌 20 年","配方均衡价格亲民","线下宠物店易购"],"cons":["蛋白脂肪中等偏低","营销投入大于研发","原料透明度一般"],"price":"¥298"},{"id":5,"brand":"渴望 Orijen","name":"渴望六种鱼","origin":"加拿大 · 1985","stage":"成猫期","stageKey":"adult","protein":"38%","fat":"18%","accent":"#5b9aa0","fit":"成猫 · 美毛亮毛 · 美毛护肤","pros":["六种深海鱼配方","Omega-3 美毛冠军","鲜肉原料高"],"cons":["鱼味重便便腥","鱼敏感猫慎用","价格偏高"],"price":"¥580"},{"id":6,"brand":"爱肯拿 Acana","name":"爱肯拿海洋盛宴","origin":"加拿大 · 1977","stage":"成猫期","stageKey":"adult","protein":"37%","fat":"18%","accent":"#7fa0b8","fit":"成猫 · 美毛 · 海洋鱼配方","pros":["渴望同厂姐妹品牌","海洋鱼为主 美毛好","性价比高于渴望"],"cons":["鱼源单一品种有局限","豆类成分较多","包装分装便利"],"price":"¥498"},{"id":7,"brand":"冠能 Pro Plan","name":"冠能成猫鸡肉","origin":"美国 · 1894","stage":"成猫期","stageKey":"adult","protein":"36%","fat":"15%","accent":"#c97b5a","fit":"成猫 · 经典安全 · 雀巢旗下","pros":["百年品牌 配方稳定","线下医院常推荐","益生菌助消化"],"cons":["含谷物","蛋白脂肪中等","价格中等偏上"],"price":"¥428"},{"id":8,"brand":"网易严选","name":"网易严选全价","origin":"中国 · 2016","stage":"成猫期","stageKey":"adult","protein":"36%","fat":"15%","accent":"#c98b5b","fit":"成猫 · 平价 · 网易严选供应链","pros":["电商爆款 销量第一","配方跟随进口品牌","性价比高"],"cons":["贴牌代工争议","配方频繁迭代","评测褒贬不一"],"price":"¥258"},{"id":9,"brand":"希尔思 Hill's","name":"希尔思 c/d 泌尿","origin":"美国 · 1939","stage":"功能型","stageKey":"special","protein":"32%","fat":"15%","accent":"#6f9bc9","fit":"泌尿问题 · 处方粮 · 公猫导尿后","pros":["处方粮口碑金标准","宠物医院首选","有效控制镁离子"],"cons":["需医生指导使用","非日常长期主粮","适口性一般"],"price":"¥568"},{"id":10,"brand":"皇家ROYAL CANIN","name":"皇家泌尿 S/O","origin":"法国 · 1974","stage":"功能型","stageKey":"special","protein":"32%","fat":"14%","accent":"#7fae7a","fit":"泌尿问题 · 处方粮 · 镁控制","pros":["处方粮双雄之一","溶解鸟粪石","医院渠道稳定"],"cons":["需兽医处方","味道刺激 适口一般","配方相对老旧"],"price":"¥548"},{"id":11,"brand":"冠能 Pro Plan","name":"冠能绝育控重","origin":"美国 · 1894","stage":"功能型","stageKey":"special","protein":"40%","fat":"12%","accent":"#9b6f5e","fit":"绝育后猫 · 控体重 · 防肥胖","pros":["高蛋白低脂肪","L-肉碱助燃脂","绝育猫专用配方"],"cons":["需配套控制喂食量","适口性一般","进口价偏高"],"price":"¥458"},{"id":12,"brand":"皇家ROYAL CANIN","name":"皇家长毛化毛","origin":"法国 · 1974","stage":"功能型","stageKey":"special","protein":"32%","fat":"15%","accent":"#b88a5a","fit":"长毛猫 · 化毛 · 布偶/缅因/波斯","pros":["专门化毛配方","高纤维促排毛球","适配长毛品种"],"cons":["长期吃会营养单一","化毛功能有限","需配合化毛膏"],"price":"¥448"},{"id":13,"brand":"希尔思 Hill's","name":"希尔思老年 7+","origin":"美国 · 1939","stage":"老年期","stageKey":"senior","protein":"30%","fat":"14%","accent":"#a6703e","fit":"7 岁以上 · 关节保健 · 老年呵护","pros":["老年专属配方","软骨素 + EPA 护关节","抗氧化延缓衰老"],"cons":["蛋白偏低","适口性因猫而异","价格中等"],"price":"¥498"},{"id":14,"brand":"渴望 Orijen","name":"渴望 Senior 老年","origin":"加拿大 · 1985","stage":"老年期","stageKey":"senior","protein":"38%","fat":"15%","accent":"#8b6f5e","fit":"7 岁以上 · 高蛋白护瘦体重","pros":["保留高蛋白适应老年肌肉","关节营养配方","原料依旧顶级"],"cons":["价格昂贵","高蛋白可能肾脏负担","适口性差异"],"price":"¥628"},{"id":15,"brand":"巅峰 ZIWI","name":"巅峰风干牛肉","origin":"新西兰 · 2002","stage":"冻干高肉","stageKey":"raw","protein":"45%","fat":"35%","accent":"#d4756b","fit":"高蛋白 · 冻干 · 增肌美毛","pros":["96% 鲜肉原料","风干工艺保留营养","全球冻干粮标杆"],"cons":["价格最贵","脂肪偏高需控量","假冒伪略多"],"price":"¥1280"},{"id":16,"brand":"K9 Natural","name":"K9 主食冻干","origin":"新西兰 · 2006","stage":"冻干高肉","stageKey":"raw","protein":"48%","fat":"32%","accent":"#c4756b","fit":"高蛋白 · 冻干 · 顶级生食替代","pros":["98% 鲜肉含量最高","主食级冻干可单独喂","低温风干工艺"],"cons":["价格极高","货源多为代购","部分猫不吃"],"price":"¥1180"},{"id":17,"brand":"弗列加特 Fregatti","name":"弗列加特鲜肉粮","origin":"中国 · 2014","stage":"国货精选","stageKey":"domestic","protein":"40%","fat":"18%","accent":"#5bb0a8","fit":"成猫 · 高蛋白 · 国货鲜肉代表","pros":["鲜肉注浆工艺领先","原料供应链透明","国货高端代表"],"cons":["品牌历史短","价格已逼近进口","评测口碑两极"],"price":"¥458"},{"id":18,"brand":"蓝氏 Legend","name":"蓝氏全价","origin":"中国 · 2003","stage":"国货精选","stageKey":"domestic","protein":"38%","fat":"16%","accent":"#4a90a4","fit":"成猫 · 国货 · 性价比之选","pros":["二十年国货品牌","配方稳定价格亲民","线下渠道广"],"cons":["原料透明度一般","营销投入大"],"price":"¥338"},{"id":19,"brand":"凯锐思 Kairishi","name":"凯锐思主食","origin":"中国 · 2015","stage":"国货精选","stageKey":"domestic","protein":"36%","fat":"14%","accent":"#6ba8a0","fit":"成猫 · 平价国货 · 大众入门","pros":["价格最便宜品牌之一","入门级国货首选","线下店覆盖广"],"cons":["配方中规中矩","蛋白脂肪偏低","品牌溢价低"],"price":"¥258"},{"id":20,"brand":"麦富迪 Myfoodie","name":"麦富迪营养森林","origin":"中国 · 2012","stage":"国货精选","stageKey":"domestic","protein":"34%","fat":"14%","accent":"#7fb89a","fit":"成猫 · 平价国货 · 性价比","pros":["上市公司系做国货","配方迭代快","渠道覆盖最广"],"cons":["配方频繁改动","原料透明度一般","营销大于研发"],"price":"¥298"}];
 
 var SHELF_LAYOUT = [
   { y: 7.2,  stageKey: 'kitten',   label: '幼猫期',     foodIds: [1, 2, 3, 4] },
@@ -272,11 +455,12 @@ var CAN_RADIUS = 0.62;
 var CAN_HEIGHT = 1.35;
 
 var canvas = document.getElementById('c');
-var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true });
+var renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000, 0); // 透明背景，让 HTML blob 露出
 if (THREE.SRGBColorSpace) renderer.outputColorSpace = THREE.SRGBColorSpace;
 if (THREE.ACESFilmicToneMapping) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -284,8 +468,8 @@ if (THREE.ACESFilmicToneMapping) {
 }
 
 var scene = new THREE.Scene();
-scene.background = new THREE.Color(0x3d2a1c);
-scene.fog = new THREE.Fog(0x3d2a1c, 30, 70);
+// 不再设纯色背景，依赖 HTML blob 装饰
+scene.fog = new THREE.Fog(0x4a3220, 30, 70);
 
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
 camera.position.set(0, 4.8, 18);
@@ -293,6 +477,7 @@ camera.lookAt(0, 4.15, SHELF_Z);
 var originalCameraPos = camera.position.clone();
 var originalCameraTarget = new THREE.Vector3(0, 4.15, SHELF_Z);
 
+// 灯光（保持 v12/v13 配置）
 var ambient = new THREE.AmbientLight(0xfff0d8, 0.7);
 scene.add(ambient);
 
@@ -320,9 +505,10 @@ for (var li = 0; li < 4; li++) {
   scene.add(spot.target);
 }
 
+// 地面：半透明深棕色，让背景 blob 透出一些
 var floor = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 30),
-  new THREE.MeshStandardMaterial({ color: 0x4a3220, roughness: 0.9 })
+  new THREE.MeshStandardMaterial({ color: 0x4a3220, roughness: 0.9, transparent: true, opacity: 0.85 })
 );
 floor.rotation.x = -Math.PI / 2;
 floor.receiveShadow = true;
@@ -337,6 +523,7 @@ carpet.position.set(0, 0.01, -3);
 carpet.receiveShadow = true;
 scene.add(carpet);
 
+// 后墙：保持
 var wall = new THREE.Mesh(
   new THREE.PlaneGeometry(40, 15),
   new THREE.MeshStandardMaterial({ color: 0x5a3a28, roughness: 0.85 })
@@ -347,30 +534,22 @@ scene.add(wall);
 
 var shelfGroup = new THREE.Group();
 scene.add(shelfGroup);
-
 var shelfWoodMat = new THREE.MeshStandardMaterial({ color: 0xa6703e, roughness: 0.6, metalness: 0.05 });
-var stageLabelsEl = document.getElementById('stage-labels');
 
 SHELF_LAYOUT.forEach(function(layer, layerIdx) {
-  var board = new THREE.Mesh(
-    new THREE.BoxGeometry(SHELF_WIDTH, SHELF_THICKNESS, SHELF_DEPTH),
-    shelfWoodMat
-  );
+  var board = new THREE.Mesh(new THREE.BoxGeometry(SHELF_WIDTH, SHELF_THICKNESS, SHELF_DEPTH), shelfWoodMat);
   board.position.set(0, layer.y, SHELF_Z);
-  board.castShadow = true;
-  board.receiveShadow = true;
+  board.castShadow = true; board.receiveShadow = true;
   shelfGroup.add(board);
 
   var leftCol = new THREE.Mesh(new THREE.BoxGeometry(0.4, layer.y, SHELF_DEPTH), shelfWoodMat);
   leftCol.position.set(-SHELF_WIDTH / 2 + 0.2, layer.y / 2, SHELF_Z);
-  leftCol.castShadow = true;
-  leftCol.receiveShadow = true;
+  leftCol.castShadow = true; leftCol.receiveShadow = true;
   shelfGroup.add(leftCol);
 
   var rightCol = new THREE.Mesh(new THREE.BoxGeometry(0.4, layer.y, SHELF_DEPTH), shelfWoodMat);
   rightCol.position.set(SHELF_WIDTH / 2 - 0.2, layer.y / 2, SHELF_Z);
-  rightCol.castShadow = true;
-  rightCol.receiveShadow = true;
+  rightCol.castShadow = true; rightCol.receiveShadow = true;
   shelfGroup.add(rightCol);
 
   if (layerIdx === 0) {
@@ -382,14 +561,6 @@ SHELF_LAYOUT.forEach(function(layer, layerIdx) {
     plaque.castShadow = true;
     shelfGroup.add(plaque);
   }
-
-  var sl = document.createElement('div');
-  sl.className = 'stage-label';
-  sl.dataset.stage = layer.stageKey;
-  var meta = STAGE_META[layer.stageKey] || {color:'#d4a574'};
-  sl.style.borderLeftColor = meta.color;
-  sl.textContent = layer.label;
-  stageLabelsEl.appendChild(sl);
 });
 
 var cans = [];
@@ -399,13 +570,12 @@ var hoveredCan = null;
 var selectedCan = null;
 var focusedMode = false;
 
-// 移动端相机距离动态调整
 function getCameraDistance() {
   var w = window.innerWidth;
-  if (w < 480) return 28;        // 小屏手机拉远
-  if (w < 768) return 24;        // 手机
-  if (w < 1024) return 20;       // 平板
-  return 18;                      // 桌面
+  if (w < 480) return 28;
+  if (w < 768) return 24;
+  if (w < 1024) return 20;
+  return 18;
 }
 var initialCameraDist = getCameraDistance();
 
@@ -419,82 +589,47 @@ FOODS.forEach(function(food) {
 
   var group = new THREE.Group();
   group.position.set(COL_X[colIdx], layer.y + SHELF_THICKNESS / 2 + CAN_HEIGHT / 2, SHELF_Z);
-
   var bodyColor = parseInt(food.accent.replace('#',''), 16);
-  
-  var lidMat = new THREE.MeshStandardMaterial({
-    color: 0x5a4030, roughness: 0.35, metalness: 0.8,
-    emissive: 0x2a1a10, emissiveIntensity: 0.15
-  });
-  var lid = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS * 0.95, CAN_RADIUS * 0.95, 0.12, 32), lidMat
-  );
-  lid.position.y = CAN_HEIGHT / 2 - 0.06;
-  lid.castShadow = true;
+
+  var lidMat = new THREE.MeshStandardMaterial({ color: 0x5a4030, roughness: 0.35, metalness: 0.8, emissive: 0x2a1a10, emissiveIntensity: 0.15 });
+  var lid = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS * 0.95, CAN_RADIUS * 0.95, 0.12, 32), lidMat);
+  lid.position.y = CAN_HEIGHT / 2 - 0.06; lid.castShadow = true;
   group.add(lid);
 
-  var bodyMat = new THREE.MeshStandardMaterial({
-    color: bodyColor, roughness: 0.5, metalness: 0.15,
-    emissive: bodyColor, emissiveIntensity: 0.08
-  });
-  var body = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS, CAN_RADIUS, CAN_HEIGHT - 0.12, 32), bodyMat
-  );
-  body.position.y = -0.06 / 2;
-  body.castShadow = true;
+  var bodyMat = new THREE.MeshStandardMaterial({ color: bodyColor, roughness: 0.5, metalness: 0.15, emissive: bodyColor, emissiveIntensity: 0.08 });
+  var body = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS, CAN_RADIUS, CAN_HEIGHT - 0.12, 32), bodyMat);
+  body.position.y = -0.06 / 2; body.castShadow = true;
   group.add(body);
 
-  var bandMat = new THREE.MeshStandardMaterial({
-    color: 0xf5ead0, roughness: 0.6, metalness: 0.05
-  });
-  var band = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS * 1.005, CAN_RADIUS * 1.005, 0.5, 32), bandMat
-  );
+  var bandMat = new THREE.MeshStandardMaterial({ color: 0xf5ead0, roughness: 0.6, metalness: 0.05 });
+  var band = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS * 1.005, CAN_RADIUS * 1.005, 0.5, 32), bandMat);
   band.position.y = 0.05;
   group.add(band);
 
+  // 腰封文字（保持 v13 简化版）
   var labelCanvas = document.createElement('canvas');
-  labelCanvas.width = 512;
-  labelCanvas.height = 128;
+  labelCanvas.width = 512; labelCanvas.height = 128;
   var ctx = labelCanvas.getContext('2d');
-  ctx.fillStyle = '#f5ead0';
-  ctx.fillRect(0, 0, 512, 128);
-  ctx.fillStyle = '#c4915c';
-  ctx.fillRect(0, 0, 512, 4);
-  ctx.fillRect(0, 124, 512, 4);
-  ctx.fillStyle = '#3d2e25';
-  ctx.font = 'bold 32px sans-serif';
-  ctx.textAlign = 'center';
+  ctx.fillStyle = '#f5ead0'; ctx.fillRect(0, 0, 512, 128);
+  ctx.fillStyle = '#c4915c'; ctx.fillRect(0, 0, 512, 4); ctx.fillRect(0, 124, 512, 4);
+  ctx.fillStyle = '#3d2e25'; ctx.font = 'bold 32px sans-serif'; ctx.textAlign = 'center';
   var brandText = food.brand.split(' ')[0] || food.brand;
   ctx.fillText(brandText.substring(0, 6), 256, 90);
   var labelTex = new THREE.CanvasTexture(labelCanvas);
   if (THREE.SRGBColorSpace) labelTex.colorSpace = THREE.SRGBColorSpace;
   var labelMat = new THREE.MeshBasicMaterial({ map: labelTex });
   labelMat.side = THREE.DoubleSide;
-  var labelCyl = new THREE.Mesh(
-    new THREE.CylinderGeometry(CAN_RADIUS * 1.01, CAN_RADIUS * 1.01, 0.5, 32, 1, true), labelMat
-  );
+  var labelCyl = new THREE.Mesh(new THREE.CylinderGeometry(CAN_RADIUS * 1.01, CAN_RADIUS * 1.01, 0.5, 32, 1, true), labelMat);
   labelCyl.position.y = 0.05;
   group.add(labelCyl);
 
   var ringColor = STAGE_META[food.stageKey] ? STAGE_META[food.stageKey].hex : 0xd4a574;
-  var ringMat = new THREE.MeshStandardMaterial({
-    color: ringColor, roughness: 0.4, metalness: 0.3,
-    emissive: ringColor, emissiveIntensity: 0.3
-  });
-  var ring = new THREE.Mesh(
-    new THREE.TorusGeometry(CAN_RADIUS * 0.92, 0.04, 8, 32), ringMat
-  );
-  ring.position.y = CAN_HEIGHT / 2 - 0.18;
-  ring.rotation.x = Math.PI / 2;
+  var ringMat = new THREE.MeshStandardMaterial({ color: ringColor, roughness: 0.4, metalness: 0.3, emissive: ringColor, emissiveIntensity: 0.3 });
+  var ring = new THREE.Mesh(new THREE.TorusGeometry(CAN_RADIUS * 0.92, 0.04, 8, 32), ringMat);
+  ring.position.y = CAN_HEIGHT / 2 - 0.18; ring.rotation.x = Math.PI / 2;
   group.add(ring);
 
-  group.userData = {
-    food: food, originalY: group.position.y, isCan: true,
-    stageKey: layer.stageKey,
-    bodyMat: bodyMat, labelMat: labelMat, bandMat: bandMat, lidMat: lidMat
-  };
-
+  group.userData = { food: food, originalY: group.position.y, isCan: true, stageKey: layer.stageKey, bodyMat: bodyMat, labelMat: labelMat, bandMat: bandMat, lidMat: lidMat };
   cans.push(group);
   shelfGroup.add(group);
 });
@@ -507,17 +642,12 @@ controls.minDistance = 6;
 controls.maxDistance = 38;
 controls.maxPolarAngle = Math.PI / 2 + 0.1;
 controls.minPolarAngle = 0.3;
-controls.enablePan = IS_TOUCH;  // 桌面禁用平移保持简洁，移动端启用平移
-
-// 触摸配置（必填）
+controls.enablePan = IS_TOUCH;
 if (IS_TOUCH) {
-  controls.touches = {
-    ONE: THREE.TOUCH.ROTATE,
-    TWO: THREE.TOUCH.DOLLY_PAN
-  };
+  controls.touches = { ONE: THREE.TOUCH.ROTATE, TWO: THREE.TOUCH.DOLLY_PAN };
 }
 
-
+// 筛选器
 var FILTERS = [
   { key: 'all', label: '全部' },
   { key: 'kitten', label: '幼猫' },
@@ -540,14 +670,11 @@ FILTERS.forEach(function(f) {
 });
 
 function applyFilter(key) {
-  document.querySelectorAll('.fp').forEach(function(b) {
-    b.classList.toggle('active', b.dataset.filter === key);
-  });
+  document.querySelectorAll('.fp').forEach(function(b) { b.classList.toggle('active', b.dataset.filter === key); });
   cans.forEach(function(can) {
     var sk = can.userData.stageKey;
     var fsk = can.userData.food.stageKey;
-    var visible = (key === 'all') ||
-                  (sk === key) ||
+    var visible = (key === 'all') || (sk === key) ||
                   (key === 'senior' && sk === 'mixed' && fsk === 'senior') ||
                   (key === 'raw' && sk === 'mixed' && fsk === 'raw');
     can.visible = visible;
@@ -555,7 +682,6 @@ function applyFilter(key) {
 }
 applyFilter('all');
 
-// 桌面端 click，移动端 tap（click 在移动端也能触发，但会有 300ms 延迟 → 禁用缩放即可）
 canvas.addEventListener('pointermove', function(e) {
   pointer.x = (e.clientX / window.innerWidth) * 2 - 1;
   pointer.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -615,22 +741,40 @@ function animateCamera(toPos, toTarget) {
   requestAnimationFrame(step);
 }
 
+// ═══ 紫色卡片详情面板（参考图3）═══
 function showDetail(food) {
   var meta = STAGE_META[food.stageKey] || STAGE_META.adult;
-  var html = '<h2>' + food.name + '</h2>' +
-    '<div class="brand">' + food.brand + ' · ' + food.origin + '</div>' +
-    '<span class="stage" style="background:' + meta.color + '33; color:' + meta.color + '; border:1px solid ' + meta.color + '66;">' + food.stage + '</span>' +
-    '<div class="stats">' +
-      '<div class="stat"><div class="lbl">粗蛋白</div><div class="val">' + food.protein + '</div></div>' +
-      '<div class="stat"><div class="lbl">粗脂肪</div><div class="val">' + food.fat + '</div></div>' +
-    '</div>' +
-    '<div class="fit">🎯 <strong>适合：</strong>' + food.fit + '</div>' +
-    '<div class="pros"><h4>✓ 优点</h4><ul>' +
-      food.pros.map(function(p) { return '<li>' + p + '</li>'; }).join('') +
-    '</ul></div>' +
-    '<div class="cons"><h4>× 注意</h4><ul>' +
-      food.cons.map(function(c) { return '<li>' + c + '</li>'; }).join('') +
-    '</ul></div>';
+  var can = cans.find(function(c) { return c.userData.food.id === food.id; });
+  var hex = '#' + food.accent.replace('#', '');
+  
+  // 大彩色卡片 hero
+  var heroHtml = '<div class="dc-hero" style="background:' + hex + '">' +
+    '<button class="dc-360" title="360° 旋转"><span>↻</span><br><small>360°</small></button>' +
+    '<div class="dc-stage-tag">' + food.stage + '</div>' +
+    '<div class="dc-brand-mark">' + food.brand.charAt(0) + '</div>' +
+    '<h2>' + food.name + '</h2>' +
+    '<div class="dc-price">' + food.price + '</div>' +
+    '<button class="dc-add" title="添加到对比"><span>+</span></button>' +
+  '</div>';
+  
+  // 规格 chips
+  var chipsHtml = '<div class="dc-chips">' +
+    '<span class="dc-chip" style="background:' + meta.color + '22; color:' + meta.color + '">' + food.stage + '</span>' +
+    '<span class="dc-chip">' + food.origin + '</span>' +
+    '<span class="dc-chip">蛋白 ' + food.protein + '</span>' +
+    '<span class="dc-chip">脂肪 ' + food.fat + '</span>' +
+  '</div>';
+  
+  // 适合
+  var fitHtml = '<div class="dc-section"><h4>🎯 适合</h4><p>' + food.fit + '</p></div>';
+  
+  // 优点缺点（左右分列）
+  var prosHtml = '<div class="dc-grid">' +
+    '<div class="dc-card-dc"><h4>✓ 优点</h4><ul>' + food.pros.map(function(p){return '<li>'+p+'</li>'}).join('') + '</ul></div>' +
+    '<div class="dc-card-dc"><h4>× 注意</h4><ul>' + food.cons.map(function(c){return '<li>'+c+'</li>'}).join('') + '</ul></div>' +
+  '</div>';
+  
+  var html = heroHtml + chipsHtml + fitHtml + prosHtml;
   document.getElementById('detail-content').innerHTML = html;
   document.getElementById('detail').classList.add('show');
   document.body.classList.add('detail-open');
@@ -648,7 +792,6 @@ var t0 = 0;
 function animate() {
   requestAnimationFrame(animate);
   t0 += 0.016;
-
   raycaster.setFromCamera(pointer, camera);
   var intersects = raycaster.intersectObjects(cans, true);
   var newHover = null;
@@ -661,7 +804,6 @@ function animate() {
     hoveredCan = newHover;
     canvas.style.cursor = hoveredCan ? 'pointer' : 'default';
   }
-
   if (selectedCan && focusedMode) {
     selectedCan.position.y = selectedCan.userData.originalY + Math.sin(t0 * 1.5) * 0.08;
     selectedCan.rotation.y += 0.015;
@@ -669,19 +811,16 @@ function animate() {
   if (hoveredCan && !focusedMode && hoveredCan.visible) {
     hoveredCan.rotation.y += 0.01;
   }
-
   controls.update();
   renderer.render(scene, camera);
 }
 animate();
 
-// 应用初始相机距离
 var origX = camera.position.x, origY = camera.position.y, origZ = camera.position.z;
 var dist = Math.sqrt(origX*origX + origY*origY + origZ*origZ);
 camera.position.multiplyScalar(initialCameraDist / dist);
 controls.update();
 
-// 响应式 resize
 var resizeTimeout;
 function performResize() {
   camera.aspect = window.innerWidth / window.innerHeight;
@@ -698,9 +837,7 @@ window.addEventListener('resize', function() {
   clearTimeout(resizeTimeout);
   resizeTimeout = setTimeout(performResize, 150);
 });
-window.addEventListener('orientationchange', function() {
-  setTimeout(performResize, 300);
-});
+window.addEventListener('orientationchange', function() { setTimeout(performResize, 300); });
 
 setTimeout(function() {
   var loading = document.getElementById('loading');
@@ -708,7 +845,7 @@ setTimeout(function() {
   setTimeout(function() { loading.remove(); }, 800);
 }, 200);
 
-console.log('🐱 v13 - 响应式适配 + 触摸支持');
+console.log('🐱 v15 - UI 现代化升级');
 
 })();
 </script>
