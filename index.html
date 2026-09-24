@@ -123,6 +123,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .prod-card-brand{font-size:10px;color:var(--text-light);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
 .prod-card-name{font-size:12px;font-weight:800;line-height:1.3;margin-top:3px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .prod-card-bottom{display:flex;align-items:center;justify-content:space-between;margin-top:9px}
+.prod-card-more{font-size:10px;font-weight:700;color:var(--orange-dark)}
 .prod-card-price{font-size:14px;font-weight:800;color:var(--orange-dark)}
 .prod-card-add{width:28px;height:28px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:var(--neu-sm);transition:.18s}
 .prod-card-add:active{transform:scale(.85);box-shadow:var(--neu-inset)}
@@ -148,6 +149,11 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .dc-brand{font-size:12px;opacity:.85;font-weight:700;letter-spacing:.5px;text-transform:uppercase}
 .dc-name{font-size:22px;font-weight:800;line-height:1.2;margin:4px 0 6px}
 .dc-origin{font-size:13px;opacity:.8}
+.dc-no{position:absolute;top:18px;left:18px;font-size:11px;font-weight:800;letter-spacing:1px;background:rgba(255,255,255,.2);padding:6px 12px;border-radius:20px;backdrop-filter:blur(8px);z-index:2}
+.dc-nutrition{display:flex;gap:10px;margin:14px 0 4px;flex-wrap:wrap}
+.dc-nutr-chip{flex:1;min-width:74px;background:rgba(255,255,255,.16);border-radius:16px;padding:11px 8px;text-align:center;backdrop-filter:blur(6px)}
+.dc-nutr-num{display:block;font-size:19px;font-weight:800;line-height:1}
+.dc-nutr-label{display:block;font-size:10px;opacity:.82;margin-top:5px;font-weight:700;letter-spacing:.5px}
 .dc-price-row{display:flex;align-items:center;gap:12px;margin:14px 0}
 .dc-price{font-size:30px;font-weight:800}
 .dc-unit{font-size:13px;opacity:.8}
@@ -166,6 +172,28 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .qty-num{font-size:19px;font-weight:800;min-width:26px;text-align:center}
 .dc-add-cart-btn{width:100%;border:none;border-radius:16px;padding:15px;background:#fff;color:var(--text);font-size:15px;font-weight:800;cursor:pointer;margin-top:10px;box-shadow:var(--neu-sm);transition:.18s}
 .dc-add-cart-btn:active{transform:scale(.98);box-shadow:var(--neu-inset)}
+/* 展品档案 · 展签 */
+.detail-plaque{margin:18px 22px 0;border-radius:var(--radius);background:var(--surface);box-shadow:var(--neu);padding:22px}
+.plaque-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.plaque-title{font-size:17px;font-weight:800;color:var(--text)}
+.plaque-ref{font-size:12px;font-weight:700;color:var(--orange-dark);background:var(--orange-soft);padding:6px 14px;border-radius:20px}
+.plaque-fit{font-size:13px;color:var(--text-light);line-height:1.7;background:var(--surface-2);border-radius:16px;padding:13px 15px;margin-bottom:14px;box-shadow:var(--neu-inset)}
+.plaque-fit b{color:var(--text)}
+.plaque-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.plaque-pros,.plaque-cons{border-radius:18px;padding:15px;background:var(--surface-2);box-shadow:var(--neu-sm)}
+.plaque-sub-title{font-size:14px;font-weight:800;margin-bottom:10px;color:var(--text)}
+.plaque-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:8px}
+.plaque-list li{font-size:12px;line-height:1.55;color:var(--text);display:flex;gap:7px;align-items:flex-start}
+.plaque-list li::before{content:'✓';flex-shrink:0;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;background:linear-gradient(135deg,#7fbf8a,#5aa06a);margin-top:1px}
+.plaque-cons li::before{content:'!';background:linear-gradient(135deg,var(--orange-light),var(--orange-dark))}
+/* 阶段徽章 */
+.stage-badge{display:inline-block;font-size:10px;font-weight:800;padding:4px 10px;border-radius:20px;color:#fff;background:linear-gradient(135deg,var(--orange),var(--orange-light));letter-spacing:.3px}
+.stage-badge.st-kitten{background:linear-gradient(135deg,#e9c46a,#d8a83c)}
+.stage-badge.st-adult{background:linear-gradient(135deg,#7fae7a,#5a8a55)}
+.stage-badge.st-special{background:linear-gradient(135deg,#6f9bc9,#4f7bab)}
+.stage-badge.st-senior{background:linear-gradient(135deg,#c98b5b,#a96a3e)}
+.stage-badge.st-raw{background:linear-gradient(135deg,#d4756b,#b2544a)}
+.stage-badge.st-domestic{background:linear-gradient(135deg,#5bb0a8,#3d9188)}
 /* 预览 */
 .detail-previews-wrap{margin:8px 22px 0}
 .detail-previews-label{font-size:14px;font-weight:800;margin-bottom:10px;color:var(--text);padding-left:4px}
@@ -175,6 +203,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .preview-canvas{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
 .preview-canvas canvas{width:88%!important;height:88%!important;border-radius:12px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
 .preview-name{font-size:11px;font-weight:700;margin-top:6px;line-height:1.3;text-align:center;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.preview-stage{display:flex;justify-content:center;margin-top:7px}
 .preview-price{font-size:12px;font-weight:800;color:var(--orange-dark);text-align:center;margin-top:2px}
 .preview-add{display:block;width:100%;margin-top:7px;border:none;border-radius:10px;padding:6px;background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:.18s}
 .preview-add:active{transform:scale(.95)}
@@ -240,30 +269,30 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
       <div class="home-sphere sp2"></div>
       <div class="home-sphere sp3"></div>
       <div class="home-left-content">
-        <h1>为布偶猫<br>挑选<span class="hl">刚刚好的猫粮</span></h1>
-        <p>20 款精选猫粮，真实营养数据，3D 实体渲染。从幼猫到老年，总有一款适合你的毛孩子。</p>
-        <button class="cta" onclick="switchTab('browse')">开始选购 →</button>
+        <h1>布偶猫粮<br><span class="hl">3D 展览馆</span></h1>
+        <p>20 件精选展品，真实营养档案，3D 实体还原。从幼猫到老年，逐件细看配方、优缺点与适口性。</p>
+        <button class="cta" onclick="switchTab('browse')">进入展厅 →</button>
       </div>
     </div>
 
     <div class="home-right">
       <div class="home-right-head">
-        <h2>My Storehouse</h2>
-        <span class="count" id="homeCount">20 款精选</span>
+        <h2>精选展品 · My Collection</h2>
+        <span class="count" id="homeCount">20 件展品</span>
       </div>
       <div class="home-list" id="homeList"></div>
     </div>
   </div>
 
   <div class="bottom-toolbar">
-    <button class="toolbar-btn active" onclick="switchTab('home')"><span class="tb-icon">🏠</span><span>首页</span></button>
-    <button class="toolbar-btn" onclick="switchTab('browse')"><span class="tb-icon">📦</span><span>商品</span></button>
-    <button class="toolbar-btn" onclick="switchTab('detail',1)"><span class="tb-icon">🔍</span><span>详情</span></button>
-    <button class="toolbar-btn" onclick="switchTab('compare')"><span class="tb-icon">⚖️</span><span>对比</span></button>
+    <button class="toolbar-btn active" onclick="switchTab('home')"><span class="tb-icon">🏛️</span><span>大厅</span></button>
+    <button class="toolbar-btn" onclick="switchTab('browse')"><span class="tb-icon">🖼️</span><span>展厅</span></button>
+    <button class="toolbar-btn" onclick="switchTab('detail',1)"><span class="tb-icon">🧭</span><span>展品</span></button>
+    <button class="toolbar-btn" onclick="switchTab('home')"><span class="tb-icon">⭐</span><span>展藏</span></button>
   </div>
 
-  <button class="corner-btn corner-bl" onclick="switchTab('home')" title="首页">🛋️</button>
-  <button class="corner-btn corner-br" onclick="switchTab('browse')" title="浏览">📦</button>
+  <button class="corner-btn corner-bl" onclick="switchTab('home')" title="大厅">🛋️</button>
+  <button class="corner-btn corner-br" onclick="switchTab('browse')" title="展厅">🖼️</button>
 </div>
 
 <!-- ═══ SCREEN 2: BROWSE (图2) ═══ -->
@@ -271,21 +300,21 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
   <nav class="browse-nav">
     <div class="nav-logo"><div class="logo-mark">🐱</div><span>布偶猫粮3D馆</span></div>
     <div class="browse-nav-tabs">
-      <div class="browse-nav-tab" onclick="switchTab('home')">Home</div>
-      <div class="browse-nav-tab active">Shop</div>
-      <div class="browse-nav-tab">Blog</div>
-      <div class="browse-nav-tab">Contact</div>
+      <div class="browse-nav-tab" onclick="switchTab('home')">大厅</div>
+      <div class="browse-nav-tab active">展厅</div>
+      <div class="browse-nav-tab" onclick="switchTab('detail',1)">档案</div>
+      <div class="browse-nav-tab">导览</div>
     </div>
-    <button class="browse-cart" onclick="switchTab('compare')">🛒<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
+    <button class="browse-cart" onclick="switchTab('home')" title="我的展藏">⭐<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
   </nav>
 
   <div class="browse-banner flow">
-    <div class="browse-banner-eyebrow">🐱 布偶猫专享 · 全阶段覆盖</div>
-    <h2>Shop</h2>
+    <div class="browse-banner-eyebrow">🐱 布偶猫专享 · 猫粮专题展</div>
+    <h2>Gallery · 展厅</h2>
     <p>从幼猫到老年 · 功能处方到天然冻干</p>
     <div class="browse-banner-row">
-      <span class="browse-banner-count" id="browseBannerCount">Showing 1-20 of 20 results</span>
-      <button class="browse-banner-sort">⇅ Default sorting</button>
+      <span class="browse-banner-count" id="browseBannerCount">共 20 件展品</span>
+      <button class="browse-banner-sort">🧭 按阶段导览</button>
     </div>
   </div>
 
@@ -300,15 +329,15 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
   </div>
 
   <div class="browse-count-bar">
-    <span id="browseCount">Showing 1-20 of 20 results</span>
-    <button class="sort-btn">⇅ 默认排序</button>
+    <span id="browseCount">共 20 件展品</span>
+    <button class="sort-btn">🧭 按阶段排序</button>
   </div>
 
   <div class="prod-grid" id="prodGrid"></div>
 </div>
 
-<div class="scroll-hint hidden" id="scrollHint">↓ Scroll to down</div>
-<div class="follow-hint hidden" id="followHint">→ Follow<span class="dot"></span>Fb.<span class="dot"></span>In.<span class="dot"></span>Tw.</div>
+<div class="scroll-hint hidden" id="scrollHint">↓ 向下参观</div>
+<div class="follow-hint hidden" id="followHint">→ 展品编号<span class="dot"></span>No.01<span class="dot"></span>·<span class="dot"></span>No.20</div>
 
 <!-- ═══ SCREEN 3: DETAIL (图3) ═══ -->
 <div id="detail-screen" class="hidden">
@@ -316,10 +345,10 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
     <button class="back-btn" onclick="switchTab('browse')" style="width:40px;height:40px;border-radius:14px;border:none;cursor:pointer;background:var(--surface);box-shadow:var(--neu-sm);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;transition:.18s" onactive="this.style.boxShadow='var(--neu-inset)'">←</button>
     <div class="detail-logo">🐱</div>
     <div class="detail-nav-tabs">
-      <div class="detail-nav-tab active">Products</div>
-      <div class="detail-nav-tab">Category</div>
-      <div class="detail-nav-tab">Customize</div>
-      <div class="detail-nav-tab">Collection</div>
+      <div class="detail-nav-tab active">展品</div>
+      <div class="detail-nav-tab">类别</div>
+      <div class="detail-nav-tab">档案</div>
+      <div class="detail-nav-tab">展藏</div>
     </div>
     <div class="detail-nav-actions">
       <button class="icon-btn">🔍</button>
@@ -330,48 +359,56 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
   <div class="detail-main-card" id="detailMainCard">
     <button class="dc-360-btn" title="360° 旋转">360°</button>
     <div class="detail-canvas-wrap"><canvas id="detail-can"></canvas></div>
+    <div class="dc-no" id="dcNo">No.01</div>
     <div class="dc-brand" id="dcBrand"></div>
     <div class="dc-name" id="dcName"></div>
     <div class="dc-origin" id="dcOrigin"></div>
-    <div class="dc-price-row">
-      <span class="dc-price" id="dcPrice">¥0</span>
-      <span class="dc-unit">/ 2kg</span>
-      <div style="display:flex;align-items:center;gap:4px;margin-left:auto"><div class="dc-stars" id="dcStars">★★★★★</div><span class="dc-reviews" id="dcReviews">(128条评价)</span></div>
+    <div class="dc-nutrition">
+      <div class="dc-nutr-chip"><span class="dc-nutr-num" id="dcProtein">—</span><span class="dc-nutr-label">粗蛋白</span></div>
+      <div class="dc-nutr-chip"><span class="dc-nutr-num" id="dcFat">—</span><span class="dc-nutr-label">粗脂肪</span></div>
+      <div class="dc-nutr-chip"><span class="dc-nutr-num" id="dcStage">—</span><span class="dc-nutr-label">阶段</span></div>
     </div>
     <div class="dc-color-picker" id="dcColorPicker"></div>
-    <div class="dc-size-btns" id="dcSizeBtns">
-      <button class="dc-size-btn active">2kg</button>
-      <button class="dc-size-btn">4kg</button>
-      <button class="dc-size-btn">8kg</button>
+    <button class="dc-add-cart-btn" id="dcAddCartBtn">⭐ 收藏这件展品</button>
+  </div>
+
+  <div class="detail-plaque" id="detailPlaque">
+    <div class="plaque-head">
+      <div class="plaque-title">📜 展品档案</div>
+      <span class="plaque-ref" id="plaqueRef">参考价 ¥—</span>
     </div>
-    <div class="dc-qty">
-      <button class="qty-btn" onclick="changeQty(-1)">−</button>
-      <span class="qty-num" id="qtyNum">1</span>
-      <button class="qty-btn" onclick="changeQty(1)">+</button>
-      <span style="margin-left:8px;font-size:13px;opacity:.8">数量</span>
+    <div class="plaque-fit" id="plaqueFit"></div>
+    <div class="plaque-grid">
+      <div class="plaque-pros">
+        <div class="plaque-sub-title">👍 优点</div>
+        <ul class="plaque-list" id="plaquePros"></ul>
+      </div>
+      <div class="plaque-cons">
+        <div class="plaque-sub-title">⚠️ 不足</div>
+        <ul class="plaque-list" id="plaqueCons"></ul>
+      </div>
     </div>
-    <button class="dc-add-cart-btn" id="dcAddCartBtn">🛒 加入购物车</button>
   </div>
 
   <div class="detail-previews-wrap">
-    <div class="detail-previews-label">👀 其他商品</div>
+    <div class="detail-previews-label">🧭 其他展品</div>
     <div class="detail-previews" id="detailPreviews"></div>
   </div>
 
   <div class="detail-tags">
-    <span class="detail-tag hot">🔥 New arrivals</span>
-    <span class="detail-tag">⭐ Popular</span>
-    <span class="detail-tag">💡 Recommend</span>
+    <span class="detail-tag hot">🔥 最新入馆</span>
+    <span class="detail-tag">⭐ 人气展品</span>
+    <span class="detail-tag">💡 推荐参观</span>
   </div>
 
   <div class="detail-pager">
-    <button onclick="switchTab('browse')">← Back</button>
-    <button onclick="nextProduct()">Next →</button>
+    <button onclick="switchTab('browse')">← 返回展厅</button>
+    <button onclick="nextProduct()">下一件展品 →</button>
   </div>
 
   <div class="detail-bottom-bar">
-    <button class="detail-back-btn" onclick="switchTab('browse')">← 返回列表</button>
-    <button class="detail-buy-btn" id="detailBuyBtn">立即购买</button>
+    <button class="detail-back-btn" onclick="switchTab('browse')">← 返回展厅</button>
+    <button class="detail-buy-btn" id="detailBuyBtn">⭐ 收藏展品</button>
   </div>
 </div>
 
@@ -402,6 +439,7 @@ const FOODS = [
   {id:20,name:'麦富迪 营养均衡成猫粮',en:'Myfoodie',brand:'麦富迪 Myfoodie',origin:'中国（乖宝宠物）',stage:'全阶段 · 国民均衡',stageKey:'domestic',protein:'32%',fat:'14%',body:'#f5ead0',accent:'#3a7b8a',fit:'追求均衡性价比的国民用户',pros:['大厂出品(乖宝)','品类丰富','价格亲民','渠道广泛'],cons:['蛋白质32%偏低','含谷物','适口性波动'],price:78}
 ];
 const STAGE_COLORS={kitten:'#e9c46a',adult:'#7fae7a',special:'#6f9bc9',senior:'#c98b5b',raw:'#d4756b',domestic:'#5bb0a8'};
+const STAGE_LABEL={kitten:'幼猫期',adult:'成猫期',special:'功能型',senior:'老年期',raw:'冻干高肉',domestic:'国货精选'};
 const PASTELS=['var(--pastel-pink)','var(--pastel-blue)','var(--pastel-purple)','var(--pastel-green)','var(--pastel-peach)'];
 let currentFilter='all',currentFoodId=1,cart=[],qty=1;
 const canRenderers={};
@@ -492,58 +530,60 @@ function renderHome(){
       <div class="hl-thumb" style="background:${PASTELS[i%PASTELS.length]}"><canvas id="hl-can-${f.id}"></canvas></div>
       <div class="hl-info"><div class="hl-name">${f.name}</div><div class="hl-sub">${f.brand.split(' ')[0]} · ${f.origin}</div></div>
       <span class="hl-price">¥${f.price}</span>
-      <button class="hl-add" onclick="event.stopPropagation();addToCart(${f.id})">+</button>
+      <button class="hl-add" onclick="event.stopPropagation();addToFav(${f.id})" title="收藏">★</button>
     </div>`).join('');
   requestAnimationFrame(()=>{FOODS.forEach(f=>{const c=document.getElementById(`hl-can-${f.id}`);if(c)paintCan(c,f);});});
 }
 function renderBrowse(){
   const grid=document.getElementById('prodGrid');
   const filtered=currentFilter==='all'?FOODS:FOODS.filter(f=>f.stageKey===currentFilter);
-  document.getElementById('browseCount').textContent=`Showing 1-${Math.min(20,filtered.length)} of ${filtered.length} results`;
-  document.getElementById('browseBannerCount').textContent=`Showing 1-${Math.min(20,filtered.length)} of ${filtered.length} results`;
+  document.getElementById('browseCount').textContent=`共 ${filtered.length} 件展品`;
+  document.getElementById('browseBannerCount').textContent=`共 ${filtered.length} 件展品`;
   grid.innerHTML=filtered.map((f,i)=>`
     <div class="prod-card" onclick="switchTab('detail',${f.id})">
       <div class="prod-canvas-wrap" style="background:${PASTELS[i%PASTELS.length]}"><canvas id="pc-can-${f.id}"></canvas></div>
       <div class="prod-card-body">
         <div class="prod-card-brand">${f.brand.split(' ')[0]}</div>
         <div class="prod-card-name">${f.name}</div>
-        <div class="prod-card-bottom"><span class="prod-card-price">¥${f.price}</span><button class="prod-card-add" onclick="event.stopPropagation();addToCart(${f.id})">+</button></div>
+        <div class="prod-card-bottom"><span class="stage-badge st-${f.stageKey}">${STAGE_LABEL[f.stageKey]||f.stage}</span><span class="prod-card-more">档案 →</span></div>
       </div>
     </div>`).join('');
   requestAnimationFrame(()=>{filtered.forEach(f=>{const c=document.getElementById(`pc-can-${f.id}`);if(c)paintCan(c,f);});});
 }
 function showDetail(foodId){
   currentFoodId=foodId;const f=FOODS.find(x=>x.id===foodId);if(!f)return;
+  document.getElementById('dcNo').textContent='No.'+String(f.id).padStart(2,'0');
   document.getElementById('dcBrand').textContent=f.brand.toUpperCase();
   document.getElementById('dcName').textContent=f.name;
   document.getElementById('dcOrigin').textContent=`🌍 ${f.origin} · ${f.stage}`;
-  document.getElementById('dcPrice').textContent=`¥${f.price}`;
-  document.getElementById('dcReviews').textContent=`(${Math.floor(Math.random()*200+50)}条评价)`;
+  document.getElementById('dcProtein').textContent=f.protein;
+  document.getElementById('dcFat').textContent=f.fat;
+  document.getElementById('dcStage').textContent=STAGE_LABEL[f.stageKey]||f.stage;
   document.getElementById('dcColorPicker').innerHTML=FOODS.slice(0,6).map(cf=>`<div class="dc-color-dot ${cf.id===foodId?'active':''}" style="background:${cf.accent}" onclick="switchTab('detail',${cf.id})"></div>`).join('');
+  document.getElementById('plaqueRef').textContent=`参考价 ¥${f.price}`;
+  document.getElementById('plaqueFit').innerHTML=`<b>适合对象：</b>${f.fit}`;
+  document.getElementById('plaquePros').innerHTML=f.pros.map(p=>`<li>${p}</li>`).join('');
+  document.getElementById('plaqueCons').innerHTML=f.cons.map(c=>`<li>${c}</li>`).join('');
   const others=FOODS.filter(x=>x.id!==foodId).sort(()=>Math.random()-0.5).slice(0,3);
   document.getElementById('detailPreviews').innerHTML=others.map((of,i)=>`
     <div class="preview-card" onclick="switchTab('detail',${of.id})">
       <div class="preview-canvas" style="background:${PASTELS[i%PASTELS.length]}"><canvas id="pre-can-${of.id}"></canvas></div>
       <div class="preview-name">${of.name}</div>
-      <div class="preview-price">¥${of.price}</div>
-      <button class="preview-add" onclick="event.stopPropagation();addToCart(${of.id})">+ 加购</button>
+      <div class="preview-stage"><span class="stage-badge st-${of.stageKey}">${STAGE_LABEL[of.stageKey]||of.stage}</span></div>
     </div>`).join('');
   requestAnimationFrame(()=>{
     const d=document.getElementById('detail-can');
     if(d){if(canRenderers[d.id]){canRenderers[d.id].dispose();delete canRenderers[d.id];}createCan3D(d,f);}
     others.forEach((of)=>{const c=document.getElementById(`pre-can-${of.id}`);if(c)paintCan(c,of);});
   });
-  qty=1;document.getElementById('qtyNum').textContent=qty;
 }
 function nextProduct(){const idx=FOODS.findIndex(f=>f.id===currentFoodId);const next=FOODS[(idx+1)%FOODS.length];showDetail(next.id);}
-function changeQty(d){qty=Math.max(1,Math.min(99,qty+d));document.getElementById('qtyNum').textContent=qty;}
-function addToCart(foodId){const f=FOODS.find(x=>x.id===foodId);if(!f)return;const ex=cart.find(x=>x.id===foodId);if(ex)ex.qty+=1;else cart.push({id:foodId,qty:1,name:f.name,price:f.price});updateCartBadge();
-  let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}t.textContent=`✅ 已加入购物车：${f.name}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1500);}
-function updateCartBadge(){const b=document.getElementById('cartBadge');const t=cart.reduce((s,i)=>s+i.qty,0);b.style.display=t>0?'flex':'none';b.textContent=t>99?'99+':t;}
+function addToFav(foodId){const f=FOODS.find(x=>x.id===foodId);if(!f)return;if(!cart.find(x=>x.id===foodId))cart.push({id:foodId,qty:1,name:f.name,price:f.price});updateCartBadge();
+  let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}t.textContent=`⭐ 已收藏展品：${f.name}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+function updateCartBadge(){const b=document.getElementById('cartBadge');const t=cart.length;b.style.display=t>0?'flex':'none';b.textContent=t>99?'99+':t;}
 document.getElementById('filterTabs').addEventListener('click',e=>{if(e.target.classList.contains('filter-tab')){document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');currentFilter=e.target.dataset.filter;renderBrowse();}});
-document.getElementById('dcSizeBtns').addEventListener('click',e=>{if(e.target.classList.contains('dc-size-btn')){document.querySelectorAll('.dc-size-btn').forEach(b=>b.classList.remove('active'));e.target.classList.add('active');}});
-document.getElementById('dcAddCartBtn').addEventListener('click',()=>addToCart(currentFoodId));
-document.getElementById('detailBuyBtn').addEventListener('click',()=>{addToCart(currentFoodId);switchTab('browse');});
+document.getElementById('dcAddCartBtn').addEventListener('click',()=>addToFav(currentFoodId));
+document.getElementById('detailBuyBtn').addEventListener('click',()=>addToFav(currentFoodId));
 function checkThreeReady(){if(typeof THREE!=='undefined'){document.getElementById('loadingOverlay').style.display='none';renderHome();}else setTimeout(checkThreeReady,200);}
 window.addEventListener('resize',()=>{Object.keys(canRenderers).forEach(id=>{const c=document.getElementById(id);if(c){const r=canRenderers[id];const w=c.clientWidth,h=c.clientHeight;if(w>0&&h>0){r.setSize(w,h,false);}}});});
 checkThreeReady();
