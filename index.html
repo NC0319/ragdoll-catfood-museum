@@ -62,7 +62,8 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .hl-row{display:flex;align-items:center;gap:14px;padding:12px;border-radius:18px;background:var(--surface-2);box-shadow:var(--neu-sm);cursor:pointer;transition:.18s}
 .hl-row:active{box-shadow:var(--neu-inset);transform:scale(.98)}
 .hl-thumb{width:58px;height:58px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:var(--neu-inset)}
-.hl-thumb canvas{width:90%!important;height:90%!important}
+.hl-thumb canvas{width:90%!important;height:90%!important;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
+.hl-row:hover .hl-thumb canvas{animation:canFloat 1.4s ease-in-out}
 .hl-info{flex:1;min-width:0}
 .hl-name{font-size:13px;font-weight:800;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hl-sub{font-size:11px;color:var(--text-light);margin-top:3px;font-weight:600}
@@ -116,7 +117,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .prod-card{background:var(--surface);border-radius:22px;overflow:hidden;box-shadow:var(--neu-sm);cursor:pointer;transition:transform .22s,box-shadow .22s;display:flex;flex-direction:column}
 .prod-card:active{transform:scale(.97);box-shadow:var(--neu-inset)}
 .prod-canvas-wrap{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.prod-canvas-wrap canvas{width:80%!important;height:80%!important;filter:drop-shadow(0 8px 16px rgba(0,0,0,.13))}
+.prod-canvas-wrap canvas{width:80%!important;height:80%!important;filter:drop-shadow(0 8px 16px rgba(0,0,0,.13));animation:canFloat 3.6s ease-in-out infinite}
 .prod-card:hover .prod-canvas-wrap canvas{animation:canFloat .9s ease-in-out}
 .prod-card-body{padding:12px 13px 14px;background:var(--surface)}
 .prod-card-brand{font-size:10px;color:var(--text-light);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
@@ -172,7 +173,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .preview-card{background:var(--surface);border-radius:16px;padding:12px;box-shadow:var(--neu-sm);cursor:pointer;transition:.18s}
 .preview-card:active{transform:scale(.96);box-shadow:var(--neu-inset)}
 .preview-canvas{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
-.preview-canvas canvas{width:88%!important;height:88%!important;border-radius:12px}
+.preview-canvas canvas{width:88%!important;height:88%!important;border-radius:12px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
 .preview-name{font-size:11px;font-weight:700;margin-top:6px;line-height:1.3;text-align:center;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .preview-price{font-size:12px;font-weight:800;color:var(--orange-dark);text-align:center;margin-top:2px}
 .preview-add{display:block;width:100%;margin-top:7px;border:none;border-radius:10px;padding:6px;background:linear-gradient(135deg,var(--orange),var(--orange-light));color:#fff;font-size:11px;font-weight:700;cursor:pointer;transition:.18s}
@@ -404,6 +405,48 @@ const STAGE_COLORS={kitten:'#e9c46a',adult:'#7fae7a',special:'#6f9bc9',senior:'#
 const PASTELS=['var(--pastel-pink)','var(--pastel-blue)','var(--pastel-purple)','var(--pastel-green)','var(--pastel-peach)'];
 let currentFilter='all',currentFoodId=1,cart=[],qty=1;
 const canRenderers={};
+/* ═══ 共享快照渲染：单例隐藏 WebGLRenderer，每款罐头只渲染一次 → 缓存为 2D canvas ═══
+   解决：浏览器 WebGL 上下文上限（约 8-16 个），20+ 张卡片各自建 renderer 会被静默丢弃导致画布空白 */
+let _snapRenderer=null;const _snapCache={};
+function getSnapRenderer(){
+  if(_snapRenderer)return _snapRenderer;
+  _snapRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});
+  _snapRenderer.setSize(360,360,false);_snapRenderer.setPixelRatio(1);
+  _snapRenderer.shadowMap.enabled=true;_snapRenderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  return _snapRenderer;
+}
+function getCanSnapshot(food){
+  const key='f'+food.id;if(_snapCache[key])return _snapCache[key];
+  const r=getSnapRenderer();
+  const scene=new THREE.Scene();scene.background=null;
+  const camera=new THREE.PerspectiveCamera(40,1,0.1,100);camera.position.set(0,0.5,5);camera.lookAt(0,0,0);
+  scene.add(new THREE.AmbientLight(0xffffff,0.85));
+  const dir=new THREE.DirectionalLight(0xfff5e0,1.3);dir.position.set(3,5,3);dir.castShadow=true;scene.add(dir);
+  const fill=new THREE.DirectionalLight(0xe0e8ff,0.45);fill.position.set(-3,2,-2);scene.add(fill);
+  const group=new THREE.Group();scene.add(group);
+  const bodyColor=new THREE.Color(food.body||'#f5ead0'),accentColor=new THREE.Color(food.accent||'#c4915c'),metalColor=new THREE.Color('#d4d0c8');
+  const body=new THREE.Mesh(new THREE.CylinderGeometry(0.55,0.55,1.2,32),new THREE.MeshStandardMaterial({color:bodyColor,roughness:0.35,metalness:0.1}));body.castShadow=true;body.receiveShadow=true;group.add(body);
+  const topMat=new THREE.MeshStandardMaterial({color:metalColor,roughness:0.2,metalness:0.85});
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(0.56,0.56,0.08,32),topMat);top.position.y=0.64;top.castShadow=true;group.add(top);
+  const ring=new THREE.Mesh(new THREE.TorusGeometry(0.12,0.025,8,16,Math.PI*1.5),new THREE.MeshStandardMaterial({color:metalColor,roughness:0.2,metalness:0.9}));ring.position.set(0,0.72,0.1);ring.rotation.x=-0.3;group.add(ring);
+  const bot=new THREE.Mesh(new THREE.CylinderGeometry(0.56,0.52,0.06,32),topMat);bot.position.y=-0.63;group.add(bot);
+  const band=new THREE.Mesh(new THREE.CylinderGeometry(0.562,0.562,0.4,32),new THREE.MeshStandardMaterial({color:accentColor,roughness:0.5,metalness:0.05}));band.position.y=-0.1;group.add(band);
+  const stageColor=new THREE.Color(STAGE_COLORS[food.stageKey]||'#d4a574');
+  const glow=new THREE.Mesh(new THREE.TorusGeometry(0.5,0.04,8,32),new THREE.MeshStandardMaterial({color:stageColor,emissive:stageColor,emissiveIntensity:0.6,roughness:0.3,metalness:0.2}));glow.position.y=0.7;group.add(glow);
+  const shadow=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShadowMaterial({opacity:0.15}));shadow.rotation.x=-Math.PI/2;shadow.position.y=-1.3;shadow.receiveShadow=true;scene.add(shadow);
+  group.position.y=-0.1;group.rotation.y=0.5;
+  r.render(scene,camera);
+  const out=document.createElement('canvas');out.width=360;out.height=360;
+  out.getContext('2d').drawImage(r.domElement,0,0);
+  _snapCache[key]=out;return out;
+}
+function paintCan(canvas,food){
+  if(!canvas)return;
+  const snap=getCanSnapshot(food);
+  canvas.width=360;canvas.height=360;
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,360,360);ctx.drawImage(snap,0,0);
+}
 function createCan3D(canvas,food){
   const W=canvas.clientWidth||150,H=canvas.clientHeight||150;
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
@@ -451,7 +494,7 @@ function renderHome(){
       <span class="hl-price">¥${f.price}</span>
       <button class="hl-add" onclick="event.stopPropagation();addToCart(${f.id})">+</button>
     </div>`).join('');
-  requestAnimationFrame(()=>{FOODS.forEach(f=>{const c=document.getElementById(`hl-can-${f.id}`);if(c&&!canRenderers[c.id])createCan3D(c,f);});});
+  requestAnimationFrame(()=>{FOODS.forEach(f=>{const c=document.getElementById(`hl-can-${f.id}`);if(c)paintCan(c,f);});});
 }
 function renderBrowse(){
   const grid=document.getElementById('prodGrid');
@@ -467,7 +510,7 @@ function renderBrowse(){
         <div class="prod-card-bottom"><span class="prod-card-price">¥${f.price}</span><button class="prod-card-add" onclick="event.stopPropagation();addToCart(${f.id})">+</button></div>
       </div>
     </div>`).join('');
-  requestAnimationFrame(()=>{filtered.forEach(f=>{const c=document.getElementById(`pc-can-${f.id}`);if(c&&!canRenderers[c.id])createCan3D(c,f);});});
+  requestAnimationFrame(()=>{filtered.forEach(f=>{const c=document.getElementById(`pc-can-${f.id}`);if(c)paintCan(c,f);});});
 }
 function showDetail(foodId){
   currentFoodId=foodId;const f=FOODS.find(x=>x.id===foodId);if(!f)return;
@@ -488,7 +531,7 @@ function showDetail(foodId){
   requestAnimationFrame(()=>{
     const d=document.getElementById('detail-can');
     if(d){if(canRenderers[d.id]){canRenderers[d.id].dispose();delete canRenderers[d.id];}createCan3D(d,f);}
-    others.forEach((of,i)=>{const c=document.getElementById(`pre-can-${of.id}`);if(c&&!canRenderers[c.id])createCan3D(c,of);});
+    others.forEach((of)=>{const c=document.getElementById(`pre-can-${of.id}`);if(c)paintCan(c,of);});
   });
   qty=1;document.getElementById('qtyNum').textContent=qty;
 }
