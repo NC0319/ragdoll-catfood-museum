@@ -62,8 +62,8 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .hl-row{display:flex;align-items:center;gap:14px;padding:12px;border-radius:18px;background:var(--surface-2);box-shadow:var(--neu-sm);cursor:pointer;transition:.18s}
 .hl-row:active{box-shadow:var(--neu-inset);transform:scale(.98)}
 .hl-thumb{width:58px;height:58px;border-radius:14px;flex-shrink:0;display:flex;align-items:center;justify-content:center;box-shadow:var(--neu-inset)}
-.hl-thumb canvas{width:90%!important;height:90%!important;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
-.hl-row:hover .hl-thumb canvas{animation:canFloat 1.4s ease-in-out}
+.hl-thumb img.can-img{width:90%!important;height:90%!important;object-fit:contain;display:block;filter:drop-shadow(0 4px 8px rgba(0,0,0,.12))}
+.hl-row:hover .hl-thumb img.can-img{animation:canFloat 1.4s ease-in-out}
 .hl-info{flex:1;min-width:0}
 .hl-name{font-size:13px;font-weight:800;color:var(--text);line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hl-sub{font-size:11px;color:var(--text-light);margin-top:3px;font-weight:600}
@@ -117,8 +117,8 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .prod-card{background:var(--surface);border-radius:22px;overflow:hidden;box-shadow:var(--neu-sm);cursor:pointer;transition:transform .22s,box-shadow .22s;display:flex;flex-direction:column}
 .prod-card:active{transform:scale(.97);box-shadow:var(--neu-inset)}
 .prod-canvas-wrap{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
-.prod-canvas-wrap canvas{width:80%!important;height:80%!important;filter:drop-shadow(0 8px 16px rgba(0,0,0,.13));animation:canFloat 3.6s ease-in-out infinite}
-.prod-card:hover .prod-canvas-wrap canvas{animation:canFloat .9s ease-in-out}
+.prod-canvas-wrap img.can-img{width:80%!important;height:80%!important;object-fit:contain;display:block;filter:drop-shadow(0 8px 16px rgba(0,0,0,.13));animation:canFloat 3.6s ease-in-out infinite}
+.prod-card:hover .prod-canvas-wrap img.can-img{animation:canFloat .9s ease-in-out}
 .prod-card-body{padding:12px 13px 14px;background:var(--surface)}
 .prod-card-brand{font-size:10px;color:var(--text-light);font-weight:700;letter-spacing:.4px;text-transform:uppercase}
 .prod-card-name{font-size:12px;font-weight:800;line-height:1.3;margin-top:3px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
@@ -194,6 +194,24 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .stage-badge.st-senior{background:linear-gradient(135deg,#c98b5b,#a96a3e)}
 .stage-badge.st-raw{background:linear-gradient(135deg,#d4756b,#b2544a)}
 .stage-badge.st-domestic{background:linear-gradient(135deg,#5bb0a8,#3d9188)}
+/* 搜索与品牌筛选 */
+.search-bar{display:flex;align-items:center;gap:10px;margin:16px 22px 0;background:var(--surface);border-radius:20px;padding:12px 16px;box-shadow:var(--neu-inset)}
+.search-icon{font-size:16px}
+#searchInput{flex:1;border:none;outline:none;background:transparent;font-size:14px;color:var(--text);font-weight:600}
+#searchInput::placeholder{color:var(--text-light)}
+.brand-tabs{display:flex;gap:8px;overflow-x:auto;padding:10px 22px 4px;scrollbar-width:none}
+.brand-tabs::-webkit-scrollbar{display:none}
+.brand-tab{flex-shrink:0;border:none;border-radius:16px;padding:7px 15px;font-size:12px;font-weight:700;cursor:pointer;color:var(--text-light);background:var(--surface);box-shadow:var(--neu-sm);transition:.18s;white-space:nowrap}
+.brand-tab.active{color:#fff;background:linear-gradient(135deg,var(--orange),var(--orange-light))}
+.brand-tab:active{box-shadow:var(--neu-inset);transform:scale(.95)}
+.empty-state{grid-column:1/-1;text-align:center;padding:50px 20px;font-size:14px;font-weight:700;color:var(--text-light);line-height:1.9}
+/* 首页 hero 罐头 */
+.hero-can-wrap{width:170px;height:170px;margin:0 auto 18px;border-radius:50%;background:radial-gradient(circle at 35% 30%,rgba(255,255,255,.55),rgba(255,255,255,0));display:flex;align-items:center;justify-content:center;position:relative}
+.hero-can{width:78%;height:78%;object-fit:contain;animation:canFloat 4s ease-in-out infinite;filter:drop-shadow(0 14px 22px rgba(0,0,0,.22))}
+/* 展藏页 */
+.fav-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px 12px}
+.fav-head h2{font-size:22px;font-weight:800;color:var(--text)}
+.fav-list{padding:0 22px 110px;display:flex;flex-direction:column;gap:12px;max-width:720px;margin:0 auto}
 /* 预览 */
 .detail-previews-wrap{margin:8px 22px 0}
 .detail-previews-label{font-size:14px;font-weight:800;margin-bottom:10px;color:var(--text);padding-left:4px}
@@ -201,7 +219,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 .preview-card{background:var(--surface);border-radius:16px;padding:12px;box-shadow:var(--neu-sm);cursor:pointer;transition:.18s}
 .preview-card:active{transform:scale(.96);box-shadow:var(--neu-inset)}
 .preview-canvas{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center}
-.preview-canvas canvas{width:88%!important;height:88%!important;border-radius:12px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
+.preview-canvas img.can-img{width:88%!important;height:88%!important;object-fit:contain;display:block;border-radius:12px;filter:drop-shadow(0 5px 10px rgba(0,0,0,.12))}
 .preview-name{font-size:11px;font-weight:700;margin-top:6px;line-height:1.3;text-align:center;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 .preview-stage{display:flex;justify-content:center;margin-top:7px}
 .preview-price{font-size:12px;font-weight:800;color:var(--orange-dark);text-align:center;margin-top:2px}
@@ -231,12 +249,16 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
 @media(max-width:768px){
   .home-split{grid-template-columns:1fr}
   .home-left,.home-right{min-height:auto}
+  .hero-can-wrap{width:120px;height:120px}
+  .hl-add{width:40px;height:40px;font-size:20px}
 }
 @media(max-width:480px){
   .prod-grid{grid-template-columns:repeat(2,1fr)}
   .detail-previews{grid-template-columns:repeat(2,1fr)}
   .browse-nav-tabs,.detail-nav-tabs{display:none}
   .browse-banner h2{font-size:21px}
+  .prod-card,.hl-row,.preview-card,.plaque-pros,.plaque-cons{border:1px solid rgba(163,177,198,.28)}
+  .icon-btn{width:44px;height:44px}
 }
 @media(max-width:360px){
   .prod-grid{grid-template-columns:repeat(2,1fr);gap:10px}
@@ -269,6 +291,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
       <div class="home-sphere sp2"></div>
       <div class="home-sphere sp3"></div>
       <div class="home-left-content">
+        <div class="hero-can-wrap"><img class="can-img hero-can" data-food="21" alt="皇家布偶猫成猫粮"></div>
         <h1>布偶猫粮<br><span class="hl">3D 展览馆</span></h1>
         <p>54 件精选展品，覆盖 14 个品牌，真实营养档案，3D 实体还原。从幼猫到老年，逐件细看配方、优缺点与适口性。</p>
         <button class="cta" onclick="switchTab('browse')">进入展厅 →</button>
@@ -282,13 +305,6 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
       </div>
       <div class="home-list" id="homeList"></div>
     </div>
-  </div>
-
-  <div class="bottom-toolbar">
-    <button class="toolbar-btn active" onclick="switchTab('home')"><span class="tb-icon">🏛️</span><span>大厅</span></button>
-    <button class="toolbar-btn" onclick="switchTab('browse')"><span class="tb-icon">🖼️</span><span>展厅</span></button>
-    <button class="toolbar-btn" onclick="switchTab('detail',1)"><span class="tb-icon">🧭</span><span>展品</span></button>
-    <button class="toolbar-btn" onclick="switchTab('home')"><span class="tb-icon">⭐</span><span>展藏</span></button>
   </div>
 
   <button class="corner-btn corner-bl" onclick="switchTab('home')" title="大厅">🛋️</button>
@@ -305,7 +321,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
       <div class="browse-nav-tab" onclick="switchTab('detail',1)">档案</div>
       <div class="browse-nav-tab">导览</div>
     </div>
-    <button class="browse-cart" onclick="switchTab('home')" title="我的展藏">⭐<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
+    <button class="browse-cart" onclick="switchTab('fav')" title="我的展藏">⭐<span class="cart-badge" id="cartBadge" style="display:none">0</span></button>
   </nav>
 
   <div class="browse-banner flow">
@@ -318,6 +334,11 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
     </div>
   </div>
 
+  <div class="search-bar">
+    <span class="search-icon">🔍</span>
+    <input id="searchInput" type="search" placeholder="搜索展品 / 品牌 / 产地…" autocomplete="off">
+  </div>
+
   <div class="filter-tabs" id="filterTabs">
     <button class="filter-tab active" data-filter="all">全部</button>
     <button class="filter-tab" data-filter="kitten">🐱 幼猫期</button>
@@ -326,6 +347,24 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
     <button class="filter-tab" data-filter="senior">🐾 老年期</button>
     <button class="filter-tab" data-filter="raw">🥩 冻干高肉</button>
     <button class="filter-tab" data-filter="domestic">⭐ 国货精选</button>
+  </div>
+
+  <div class="brand-tabs" id="brandTabs">
+    <button class="brand-tab active" data-brand="all">全部品牌</button>
+    <button class="brand-tab" data-brand="皇家">皇家</button>
+    <button class="brand-tab" data-brand="渴望">渴望</button>
+    <button class="brand-tab" data-brand="爱肯拿">爱肯拿</button>
+    <button class="brand-tab" data-brand="冠能">冠能</button>
+    <button class="brand-tab" data-brand="希尔思">希尔思</button>
+    <button class="brand-tab" data-brand="巅峰">巅峰</button>
+    <button class="brand-tab" data-brand="K9">K9</button>
+    <button class="brand-tab" data-brand="网易严选">网易严选</button>
+    <button class="brand-tab" data-brand="诚实一口">诚实一口</button>
+    <button class="brand-tab" data-brand="卫仕">卫仕</button>
+    <button class="brand-tab" data-brand="弗列加特">弗列加特</button>
+    <button class="brand-tab" data-brand="蓝氏">蓝氏</button>
+    <button class="brand-tab" data-brand="凯锐思">凯锐思</button>
+    <button class="brand-tab" data-brand="麦富迪">麦富迪</button>
   </div>
 
   <div class="browse-count-bar">
@@ -348,7 +387,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
       <div class="detail-nav-tab active">展品</div>
       <div class="detail-nav-tab">类别</div>
       <div class="detail-nav-tab">档案</div>
-      <div class="detail-nav-tab">展藏</div>
+      <div class="detail-nav-tab" onclick="switchTab('fav')">展藏</div>
     </div>
     <div class="detail-nav-actions">
       <button class="icon-btn">🔍</button>
@@ -357,7 +396,7 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
   </nav>
 
   <div class="detail-main-card" id="detailMainCard">
-    <button class="dc-360-btn" title="360° 旋转">360°</button>
+    <button class="dc-360-btn" onclick="toggleAutoRotate()" title="点击切换自动旋转 / 拖拽旋转">🔄</button>
     <div class="detail-canvas-wrap"><canvas id="detail-can"></canvas></div>
     <div class="dc-no" id="dcNo">No.01</div>
     <div class="dc-brand" id="dcBrand"></div>
@@ -410,6 +449,29 @@ html,body{font-family:'SF Pro Display','PingFang SC','Montserrat',-apple-system,
     <button class="detail-back-btn" onclick="switchTab('browse')">← 返回展厅</button>
     <button class="detail-buy-btn" id="detailBuyBtn">⭐ 收藏展品</button>
   </div>
+</div>
+
+<!-- ═══ SCREEN 4: FAV 我的展藏 ═══ -->
+<div id="fav-screen" class="hidden">
+  <nav class="detail-nav">
+    <button class="back-btn" onclick="switchTab('browse')" style="width:40px;height:40px;border-radius:14px;border:none;cursor:pointer;background:var(--surface);box-shadow:var(--neu-sm);color:var(--text);font-size:18px;display:flex;align-items:center;justify-content:center;transition:.18s">←</button>
+    <div class="detail-logo">⭐</div>
+    <div class="detail-nav-tabs"><div class="detail-nav-tab active">我的展藏</div></div>
+    <div class="detail-nav-actions"></div>
+  </nav>
+  <div class="fav-head">
+    <h2>⭐ 我的展藏</h2>
+    <span class="count" id="favCount">0 件收藏</span>
+  </div>
+  <div class="fav-list" id="favList"></div>
+</div>
+
+<!-- ═══ 全局底部工具栏（detail 屏隐藏，避免与底栏重叠）═══ -->
+<div class="bottom-toolbar" id="bottomToolbar">
+  <button class="toolbar-btn active" onclick="switchTab('home')"><span class="tb-icon">🏛️</span><span>大厅</span></button>
+  <button class="toolbar-btn" onclick="switchTab('browse')"><span class="tb-icon">🖼️</span><span>展厅</span></button>
+  <button class="toolbar-btn" onclick="switchTab('detail',1)"><span class="tb-icon">🧭</span><span>展品</span></button>
+  <button class="toolbar-btn" onclick="switchTab('fav')"><span class="tb-icon">⭐</span><span>展藏</span></button>
 </div>
 
 <script src="vendor/three.module.js"></script>
@@ -475,7 +537,7 @@ const FOODS = [
 const STAGE_COLORS={kitten:'#e9c46a',adult:'#7fae7a',special:'#6f9bc9',senior:'#c98b5b',raw:'#d4756b',domestic:'#5bb0a8'};
 const STAGE_LABEL={kitten:'幼猫期',adult:'成猫期',special:'功能型',senior:'老年期',raw:'冻干高肉',domestic:'国货精选'};
 const PASTELS=['var(--pastel-pink)','var(--pastel-blue)','var(--pastel-purple)','var(--pastel-green)','var(--pastel-peach)'];
-let currentFilter='all',currentFoodId=1,cart=[],qty=1;
+let currentFilter='all',currentBrand='all',currentSearch='',currentFoodId=1,cart=[];
 const canRenderers={};
 /* ═══ 共享快照渲染：单例隐藏 WebGLRenderer，每款罐头只渲染一次 → 缓存为 2D canvas ═══
    解决：浏览器 WebGL 上下文上限（约 8-16 个），20+ 张卡片各自建 renderer 会被静默丢弃导致画布空白 */
@@ -510,15 +572,16 @@ function getCanSnapshot(food){
   r.render(scene,camera);
   const out=document.createElement('canvas');out.width=360;out.height=360;
   out.getContext('2d').drawImage(r.domElement,0,0);
-  _snapCache[key]=out;return out;
+  const url=out.toDataURL('image/png');
+  _snapCache[key]=url;return url;
 }
-function paintCan(canvas,food){
-  if(!canvas)return;
-  const snap=getCanSnapshot(food);
-  canvas.width=360;canvas.height=360;
-  const ctx=canvas.getContext('2d');
-  ctx.clearRect(0,0,360,360);ctx.drawImage(snap,0,0);
+function paintImg(img,food){
+  if(!img)return;
+  img.src=getCanSnapshot(food);
 }
+/* 懒加载：罐头快照进入视口才生成 dataURL 渲染（省初始 54 次 WebGL 渲染与内存） */
+const _io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){const t=e.target;paintImg(t,FOODS.find(f=>f.id==t.dataset.food));_io.unobserve(t);}});},{rootMargin:'140px'});
+function attachLazyImgs(root){if(root&&_io)root.querySelectorAll('img.can-img').forEach(im=>_io.observe(im));}
 function createCan3D(canvas,food){
   const W=canvas.clientWidth||150,H=canvas.clientHeight||150;
   const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
@@ -541,47 +604,64 @@ function createCan3D(canvas,food){
   const glow=new THREE.Mesh(new THREE.TorusGeometry(0.5,0.04,8,32),new THREE.MeshStandardMaterial({color:stageColor,emissive:stageColor,emissiveIntensity:0.6,roughness:0.3,metalness:0.2}));glow.position.y=0.7;group.add(glow);
   const shadow=new THREE.Mesh(new THREE.PlaneGeometry(2,2),new THREE.ShadowMaterial({opacity:0.15}));shadow.rotation.x=-Math.PI/2;shadow.position.y=-1.3;shadow.receiveShadow=true;scene.add(shadow);
   group.position.y=-0.1;let time=Math.random()*Math.PI*2;
-  (function animate(){requestAnimationFrame(animate);time+=0.012;group.position.y=-0.1+Math.sin(time)*0.07;group.rotation.y+=0.005;renderer.render(scene,camera);})();
-  canRenderers[canvas.id]=renderer;
+  let controls=null;
+  if(window.OrbitControls){controls=new OrbitControls(camera,renderer.domElement);controls.target.set(0,0,0);controls.enableZoom=false;controls.enablePan=false;controls.enableDamping=true;controls.dampingFactor=0.08;controls.autoRotate=true;controls.autoRotateSpeed=1.6;}
+  const st={renderer:renderer,controls:controls,alive:true};
+  (function animate(){requestAnimationFrame(animate);if(!st.alive)return;time+=0.012;group.position.y=-0.1+Math.sin(time)*0.07;if(controls)controls.update();renderer.render(scene,camera);})();
+  st.dispose=()=>{st.alive=false;if(controls)controls.dispose();renderer.dispose();};
+  canRenderers[canvas.id]=st;
   const ro=new ResizeObserver(()=>{const w=canvas.clientWidth,h=canvas.clientHeight;if(w>0&&h>0){renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();}});ro.observe(canvas);
 }
 function switchTab(tab,foodId){
+  Object.values(canRenderers).forEach(st=>{if(st)st.alive=(tab==='detail');});
   document.getElementById('home-screen').classList.toggle('hidden',tab!=='home');
   document.getElementById('browse-screen').classList.toggle('hidden',tab!=='browse');
   document.getElementById('detail-screen').classList.toggle('hidden',tab!=='detail');
+  document.getElementById('fav-screen').classList.toggle('hidden',tab!=='fav');
+  document.getElementById('bottomToolbar').classList.toggle('hidden',tab==='detail');
   document.querySelectorAll('.toolbar-btn').forEach(b=>b.classList.remove('active'));
-  const map={home:0,browse:1,detail:2,compare:3};
+  const map={home:0,browse:1,detail:2,fav:3};
   if(map[tab]!==undefined){const b=document.querySelectorAll('.toolbar-btn');if(b[map[tab]])b[map[tab]].classList.add('active');}
   if(tab==='browse'){document.getElementById('scrollHint').classList.remove('hidden');document.getElementById('followHint').classList.remove('hidden');renderBrowse();}
   else{document.getElementById('scrollHint').classList.add('hidden');document.getElementById('followHint').classList.add('hidden');}
   if(tab==='detail'&&foodId)showDetail(foodId);
+  if(tab==='fav')renderFav();
   window.scrollTo({top:0,behavior:'smooth'});
 }
 function renderHome(){
   const list=document.getElementById('homeList');
   list.innerHTML=FOODS.map((f,i)=>`
     <div class="hl-row" onclick="switchTab('detail',${f.id})">
-      <div class="hl-thumb" style="background:${PASTELS[i%PASTELS.length]}"><canvas id="hl-can-${f.id}"></canvas></div>
+      <div class="hl-thumb" style="background:${PASTELS[i%PASTELS.length]}"><img class="can-img" data-food="${f.id}" alt="${f.name}" loading="lazy"></div>
       <div class="hl-info"><div class="hl-name">${f.name}</div><div class="hl-sub">${f.brand.split(' ')[0]} · ${f.origin}</div></div>
-      <button class="hl-add" onclick="event.stopPropagation();addToFav(${f.id})" title="收藏">★</button>
+      <button class="hl-add" onclick="event.stopPropagation();toggleFav(${f.id})" title="收藏">${cart.some(x=>x.id===f.id)?'★':'☆'}</button>
     </div>`).join('');
-  requestAnimationFrame(()=>{FOODS.forEach(f=>{const c=document.getElementById(`hl-can-${f.id}`);if(c)paintCan(c,f);});});
+  attachLazyImgs(document.getElementById('home-screen'));
+}
+function getFilteredFoods(){
+  return FOODS.filter(f=>{
+    if(currentFilter!=='all'&&f.stageKey!==currentFilter)return false;
+    if(currentBrand!=='all'&&f.brand.split(' ')[0]!==currentBrand)return false;
+    if(currentSearch){const q=currentSearch.toLowerCase();if(!(f.name.toLowerCase().includes(q)||f.brand.toLowerCase().includes(q)||f.origin.toLowerCase().includes(q)))return false;}
+    return true;
+  });
 }
 function renderBrowse(){
   const grid=document.getElementById('prodGrid');
-  const filtered=currentFilter==='all'?FOODS:FOODS.filter(f=>f.stageKey===currentFilter);
+  const filtered=getFilteredFoods();
   document.getElementById('browseCount').textContent=`共 ${filtered.length} 件展品`;
   document.getElementById('browseBannerCount').textContent=`共 ${filtered.length} 件展品`;
+  if(filtered.length===0){grid.innerHTML=`<div class="empty-state">🔍 没有找到匹配的展品</div>`;return;}
   grid.innerHTML=filtered.map((f,i)=>`
     <div class="prod-card" onclick="switchTab('detail',${f.id})">
-      <div class="prod-canvas-wrap" style="background:${PASTELS[i%PASTELS.length]}"><canvas id="pc-can-${f.id}"></canvas></div>
+      <div class="prod-canvas-wrap" style="background:${PASTELS[i%PASTELS.length]}"><img class="can-img" data-food="${f.id}" alt="${f.name}" loading="lazy"></div>
       <div class="prod-card-body">
         <div class="prod-card-brand">${f.brand.split(' ')[0]}</div>
         <div class="prod-card-name">${f.name}</div>
         <div class="prod-card-bottom"><span class="stage-badge st-${f.stageKey}">${STAGE_LABEL[f.stageKey]||f.stage}</span><span class="prod-card-more">档案 →</span></div>
       </div>
     </div>`).join('');
-  requestAnimationFrame(()=>{filtered.forEach(f=>{const c=document.getElementById(`pc-can-${f.id}`);if(c)paintCan(c,f);});});
+  attachLazyImgs(grid);
 }
 function showDetail(foodId){
   currentFoodId=foodId;const f=FOODS.find(x=>x.id===foodId);if(!f)return;
@@ -598,28 +678,55 @@ function showDetail(foodId){
   document.getElementById('plaqueFit').innerHTML=`<b>适合对象：</b>${f.fit}`;
   document.getElementById('plaquePros').innerHTML=f.pros.map(p=>`<li>${p}</li>`).join('');
   document.getElementById('plaqueCons').innerHTML=f.cons.map(c=>`<li>${c}</li>`).join('');
+  updateFavBtns(foodId);
   const others=FOODS.filter(x=>x.id!==foodId).sort(()=>Math.random()-0.5).slice(0,3);
   document.getElementById('detailPreviews').innerHTML=others.map((of,i)=>`
     <div class="preview-card" onclick="switchTab('detail',${of.id})">
-      <div class="preview-canvas" style="background:${PASTELS[i%PASTELS.length]}"><canvas id="pre-can-${of.id}"></canvas></div>
+      <div class="preview-canvas" style="background:${PASTELS[i%PASTELS.length]}"><img class="can-img" data-food="${of.id}" alt="${of.name}" loading="lazy"></div>
       <div class="preview-name">${of.name}</div>
       <div class="preview-stage"><span class="stage-badge st-${of.stageKey}">${STAGE_LABEL[of.stageKey]||of.stage}</span></div>
     </div>`).join('');
   requestAnimationFrame(()=>{
     const d=document.getElementById('detail-can');
     if(d){if(canRenderers[d.id]){canRenderers[d.id].dispose();delete canRenderers[d.id];}createCan3D(d,f);}
-    others.forEach((of)=>{const c=document.getElementById(`pre-can-${of.id}`);if(c)paintCan(c,of);});
+    attachLazyImgs(document.getElementById('detailPreviews'));
   });
 }
 function nextProduct(){const idx=FOODS.findIndex(f=>f.id===currentFoodId);const next=FOODS[(idx+1)%FOODS.length];showDetail(next.id);}
-function addToFav(foodId){const f=FOODS.find(x=>x.id===foodId);if(!f)return;if(!cart.find(x=>x.id===foodId))cart.push({id:foodId,name:f.name});updateCartBadge();
-  let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}t.textContent=`⭐ 已收藏展品：${f.name}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);}
+function toggleAutoRotate(){const st=canRenderers['detail-can'];if(st&&st.controls){st.controls.autoRotate=!st.controls.autoRotate;}}
+function updateFavBtns(foodId){const on=cart.some(x=>x.id===foodId);
+  const a=document.getElementById('dcAddCartBtn');if(a)a.textContent=on?'✅ 已收藏':'⭐ 收藏这件展品';
+  const b=document.getElementById('detailBuyBtn');if(b)b.textContent=on?'✅ 已收藏':'⭐ 收藏展品';}
+function toggleFav(foodId){const f=FOODS.find(x=>x.id===foodId);if(!f)return;const has=cart.some(x=>x.id===foodId);
+  if(has)cart=cart.filter(x=>x.id!==foodId);else cart.push({id:foodId,name:f.name});
+  updateCartBadge();
+  let t=document.getElementById('toast');if(!t){t=document.createElement('div');t.id='toast';t.className='toast';document.body.appendChild(t);}
+  t.textContent=has?`已取消收藏：${f.name}`:`⭐ 已收藏展品：${f.name}`;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),1600);
+  if(!document.getElementById('fav-screen').classList.contains('hidden'))renderFav();
+  updateFavBtns(foodId);
+  document.querySelectorAll(`.hl-add[onclick*="toggleFav(${foodId})"]`).forEach(b=>{if(!b.textContent.includes('✕'))b.textContent=has?'☆':'★';});
+}
 function updateCartBadge(){const b=document.getElementById('cartBadge');const t=cart.length;b.style.display=t>0?'flex':'none';b.textContent=t>99?'99+':t;}
+function renderFav(){
+  const wrap=document.getElementById('favList');
+  document.getElementById('favCount').textContent=`${cart.length} 件收藏`;
+  if(cart.length===0){wrap.innerHTML=`<div class="empty-state">⭐ 还没有收藏任何展品<br>去展厅逛逛吧</div>`;return;}
+  const items=cart.map(x=>FOODS.find(f=>f.id===x.id)).filter(Boolean);
+  wrap.innerHTML=items.map((f,i)=>`
+    <div class="hl-row" onclick="switchTab('detail',${f.id})">
+      <div class="hl-thumb" style="background:${PASTELS[i%PASTELS.length]}"><img class="can-img" data-food="${f.id}" alt="${f.name}" loading="lazy"></div>
+      <div class="hl-info"><div class="hl-name">${f.name}</div><div class="hl-sub">${f.brand.split(' ')[0]} · ${f.origin}</div></div>
+      <button class="hl-add" onclick="event.stopPropagation();toggleFav(${f.id})" title="取消收藏" style="background:var(--orange-soft);color:var(--orange-dark)">✕</button>
+    </div>`).join('');
+  attachLazyImgs(wrap);
+}
 document.getElementById('filterTabs').addEventListener('click',e=>{if(e.target.classList.contains('filter-tab')){document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');currentFilter=e.target.dataset.filter;renderBrowse();}});
-document.getElementById('dcAddCartBtn').addEventListener('click',()=>addToFav(currentFoodId));
-document.getElementById('detailBuyBtn').addEventListener('click',()=>addToFav(currentFoodId));
+document.getElementById('brandTabs').addEventListener('click',e=>{if(e.target.classList.contains('brand-tab')){document.querySelectorAll('.brand-tab').forEach(t=>t.classList.remove('active'));e.target.classList.add('active');currentBrand=e.target.dataset.brand;renderBrowse();}});
+document.getElementById('searchInput').addEventListener('input',e=>{currentSearch=e.target.value.trim();renderBrowse();});
+document.getElementById('dcAddCartBtn').addEventListener('click',()=>toggleFav(currentFoodId));
+document.getElementById('detailBuyBtn').addEventListener('click',()=>toggleFav(currentFoodId));
+window.addEventListener('resize',()=>{Object.keys(canRenderers).forEach(id=>{const c=document.getElementById(id);if(c){const st=canRenderers[id];const w=c.clientWidth,h=c.clientHeight;if(w>0&&h>0){st.renderer.setSize(w,h,false);}}});});
 function checkThreeReady(){if(typeof THREE!=='undefined'){document.getElementById('loadingOverlay').style.display='none';renderHome();}else setTimeout(checkThreeReady,200);}
-window.addEventListener('resize',()=>{Object.keys(canRenderers).forEach(id=>{const c=document.getElementById(id);if(c){const r=canRenderers[id];const w=c.clientWidth,h=c.clientHeight;if(w>0&&h>0){r.setSize(w,h,false);}}});});
 checkThreeReady();
 </script>
 </body>
